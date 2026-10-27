@@ -72,6 +72,10 @@ the payout, a pledge ending before reports and claims can come in, **the UK anno
 claim while one is open, and a claim on a pledge already ruled and paid. The contract's balance was reconciled with
 `totals()` (active bonds plus open stakes) at three points of the run, each time after every transfer had finalized.
 
+**From the live app with MetaMask**, a tester backed the same $150M target by 2026-03-31, reported the shortfall and
+conceded: validators ruled 5.94% short and paid **0.1189 GEN** pro rata, all three transactions `FINALIZED` with
+`SUCCESS` ([wallet test](docs/REPRODUCTION.md#wallet-test-from-the-live-app)).
+
 ## Who can do what (and the attacks this blocks)
 
 | Rule | Why |

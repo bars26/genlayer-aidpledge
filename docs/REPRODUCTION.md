@@ -67,7 +67,7 @@ read only after every transaction touching the contract was FINALIZED:
 | claim open on P0 | 4.00 | 0.40 | 4.40 | 4.40 | match |
 | before the response window closes | 9.64 | 0.40 | 10.04 | 10.04 | match |
 | end of run | 9.41 | 0.00 | 9.41 | 9.41 | match |
-| now (when this file was generated) | 9.41 | 0.00 | 9.41 | 9.41 | match |
+| now (when this file was generated) | 11.29 | 0.00 | 11.29 | 11.29 | match |
 
 ## Evidence packets
 
@@ -100,6 +100,16 @@ reporter   19.88 GEN
 fund       1.71 GEN
 bystander  1.00 GEN
 ```
+
+## Wallet test from the live app
+
+MetaMask test from the production app (aidpledge-bars26.vercel.app): the tester backs the UK's announced funding for Sudan with a $150M target by 2026-03-31, reports the shortfall and concedes as the pledger. The tester's own wallet is the pledger, the reporter and the beneficiary, so both payout transfers land there. Wallet `0x4f80b5c475fced34fc9a07ffccf39e1adc1406bf`. Every transaction is FINALIZED with execution result SUCCESS.
+
+| Step | GEN sent | Result | Tx |
+|---|---|---|---|
+| Back this target with GEN: United Kingdom (FTS 2917) → Sudan HNRP 2025 (plan 1220), $150,000,000 by 2026-03-31, the gov.uk 15 April 2025 release, payout 2 GEN, bond 2 GEN, open until 2026-11-26, beneficiary = own wallet | 2 GEN | pledge_4; validators read the announcement as MATCH | [`0xf6158dba…`](https://explorer-studio.genlayer.com/tx/0xf6158dba74d63ed7db5370a337a0af146781bcfc978a0d7c446f794dcb9fc6a9) |
+| Report a shortfall (stake = payout / 10) | 0.2 GEN | claim_3 Fell short (shortfall): $141,078,936 committed or paid in 22 flows, $8,921,064 short (5.94%) | [`0xc7f7ba4c…`](https://explorer-studio.genlayer.com/tx/0xc7f7ba4c2c161e11ba2bd17594ee976bcd0e36105dca9ea27ba8df53f45cf0f1) |
+| Concede and pay now (pledger) |  | paid pro rata: 0.1189 GEN (5.94% of 2 GEN); 0.1071 GEN to the beneficiary, 0.0119 GEN reward + 0.2 GEN stake to the reporter (transfers 0x4aaffc28…, 0x39b3fa03…); 1.8811 GEN stays bonded | [`0x1cd64f5f…`](https://explorer-studio.genlayer.com/tx/0x1cd64f5fc8555a6de4989a658bad3dd55c856310826a2e2d7d7916724dbc190c) |
 
 
 ## Every transaction
