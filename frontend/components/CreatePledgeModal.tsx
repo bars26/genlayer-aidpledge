@@ -52,7 +52,10 @@ export function CreatePledgeModal({ open, onOpenChange, terms }: { open: boolean
   const payout = parseGen(f.payout);
   const bond = f.bond ? parseGen(f.bond) : payout;
   const minExpires = validDate ? addDays(f.deadline, REPORTING_LAG_DAYS + REPORT_DAYS) : "";
-  const expires = f.expires || (minExpires ? addDays(minExpires, 30) : "");
+  // A pledge for a past deadline must still end in the future, or no claim could be filed before it expires.
+  const today = todayUtc();
+  const earliest = minExpires && minExpires > today ? minExpires : today;
+  const expires = f.expires || (minExpires ? addDays(earliest, 30) : "");
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setF({ ...f, [k]: e.target.value });
 
   const problems = [
@@ -64,7 +67,7 @@ export function CreatePledgeModal({ open, onOpenChange, terms }: { open: boolean
     !(payout && payout >= MIN_PAYOUT_WEI) && "The payout must be at least 1 GEN.",
     !(bond && payout && bond >= payout) && "The bond must cover the payout.",
     !/^0x[0-9a-fA-F]{40}$/.test(f.beneficiary.trim()) && "Enter the beneficiary's wallet address.",
-    (!expires || expires < todayUtc() || (minExpires && expires < minExpires)) && `The pledge must run until ${minExpires || "60 days after the deadline"} or later.`,
+    (!expires || expires < earliest || (minExpires && expires < minExpires)) && `The pledge must run until ${minExpires ? earliest : "60 days after the deadline"} or later.`,
   ].filter(Boolean) as string[];
 
   const submit = async () => {
@@ -176,7 +179,9 @@ export function CreatePledgeModal({ open, onOpenChange, terms }: { open: boolean
               <Input type="date" value={expires} onChange={set("expires")} />
               {minExpires && (
                 <p className="text-[11px] text-muted-foreground">
-                  Earliest {minExpires}: {REPORTING_LAG_DAYS} days for FTS reports, then {REPORT_DAYS} days to claim.
+                  {minExpires > today
+                    ? `Earliest ${minExpires}: ${REPORTING_LAG_DAYS} days for FTS reports, then ${REPORT_DAYS} days to claim.`
+                    : `Earliest ${today}: claims are open now, and they close when the pledge ends.`}
                 </p>
               )}
             </div>
