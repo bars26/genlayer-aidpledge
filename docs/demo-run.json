@@ -1,0 +1,455 @@
+{
+  "contract": "0xA51aE3DBecF765A554479B5f8f83aaeB374872C7",
+  "accounts": {
+    "pledger": "0x74Fc413b6077F1CA5eee65158c70C8AB8dC56e3c",
+    "reporter": "0x3Eb533afc9F0C0c00a2A5448905c45A78FF890aF",
+    "fund": "0x1a865B2aA1Ea2555D4Bb1Ac2C68e31F677009929",
+    "bystander": "0x5FF92365fa39721E974Fd9D381816115fE46ba29"
+  },
+  "pledges": [
+    "pledge_0",
+    "pledge_1",
+    "pledge_2",
+    "pledge_3"
+  ],
+  "claims": [
+    "claim_0",
+    "claim_1",
+    "claim_2"
+  ],
+  "announcement": {
+    "answer": "MATCH",
+    "chars": 5551,
+    "excerpt": "Press release UK announces new humanitarian funding for Sudan The UK has announced new support to Sudan ahead of the Sudan conference which will bring together international representatives. From: Foreign, Commonwealth &amp; Development Office and The Rt Hon David Lammy MP Published: 15 April 2025 2024 to 2026 Starmer Labour government \"> This was published under the 2024 to 2026 Starmer Labour government the UK will commit further life-saving aid for over 650,000 people affected by the ongoing ",
+    "sha256": "b61f6f1e70628111bff3b48e8f4183f25ca080927c5419694b9341bf3efc7713",
+    "url": "https://www.gov.uk/government/news/uk-announces-new-humanitarian-funding-for-sudan"
+  },
+  "coverages": {
+    "pledge_0 with an open claim": {
+      "bond": "4000000000000000000",
+      "claims_open": "2026-04-30",
+      "covered": true,
+      "deadline": "2026-03-31",
+      "liability": "4000000000000000000",
+      "locked_until": "2027-03-31",
+      "outcome": "",
+      "payout": "4000000000000000000",
+      "pending_claims": 1
+    },
+    "pledge_3": {
+      "bond": "2000000000000000000",
+      "claims_open": "2027-01-30",
+      "covered": true,
+      "deadline": "2026-12-31",
+      "liability": "2000000000000000000",
+      "locked_until": "2027-03-31",
+      "outcome": "",
+      "payout": "2000000000000000000",
+      "pending_claims": 0
+    },
+    "pledge_0 after settling": {
+      "bond": "3762104960000000000",
+      "claims_open": "2026-04-30",
+      "covered": true,
+      "deadline": "2026-03-31",
+      "liability": "0",
+      "locked_until": "2027-03-31",
+      "outcome": "paid",
+      "payout": "4000000000000000000",
+      "pending_claims": 0
+    }
+  },
+  "reconciliations": [
+    {
+      "label": "claim open on P0",
+      "bonds": "4000000000000000000",
+      "pending_stakes": "400000000000000000",
+      "expected": "4400000000000000000",
+      "balance": "4400000000000000000",
+      "ok": true
+    },
+    {
+      "label": "before the response window closes",
+      "bonds": "9640000000000000000",
+      "pending_stakes": "400000000000000000",
+      "expected": "10040000000000000000",
+      "balance": "10040000000000000000",
+      "ok": true
+    },
+    {
+      "label": "end of run",
+      "bonds": "9410000000000000000",
+      "pending_stakes": "0",
+      "expected": "9410000000000000000",
+      "balance": "9410000000000000000",
+      "ok": true
+    }
+  ],
+  "evidence": {
+    "claim_0": {
+      "timeline": [
+        {
+          "at": "2026-10-27T13:31:00",
+          "code": "shortfall",
+          "event": "filed",
+          "evidence": "d7b9379cb7bd6e6ad31b413266f741f9a98a436c755aeeade6e6ab4c29041104",
+          "verdict": "BREACHED"
+        },
+        {
+          "at": "2026-10-27T13:32:24",
+          "before": "BREACHED",
+          "by": "pledger",
+          "code": "shortfall",
+          "event": "contested",
+          "evidence": "05d05ffcc18d7536388a60dee9d3aa0f6eac1c9ef1ec8b4c02a161f340a69c8e",
+          "verdict": "BREACHED"
+        },
+        {
+          "at": "2026-10-27T13:46:55",
+          "beneficiary": "214105536000000000",
+          "event": "settled",
+          "outcome": "paid",
+          "reporter": "23789504000000000",
+          "share_bp": 594
+        }
+      ],
+      "packets": [
+        {
+          "packet_sha256": "d7b9379cb7bd6e6ad31b413266f741f9a98a436c755aeeade6e6ab4c29041104",
+          "flows_sha256": "dce0803d6bdc9ee09a0a481b132855fa116146c0e78cbc2e7ca26504cb3998b7",
+          "flows_total": 22,
+          "fts_total_incoming": 141078936,
+          "read_at": "2026-10-27T13:31:00",
+          "source": "https://api.hpc.tools/v1/public/fts/flow?planId=1220&filterBy=sourceOrganizationId:2917&limit=1000"
+        },
+        {
+          "packet_sha256": "05d05ffcc18d7536388a60dee9d3aa0f6eac1c9ef1ec8b4c02a161f340a69c8e",
+          "flows_sha256": "dce0803d6bdc9ee09a0a481b132855fa116146c0e78cbc2e7ca26504cb3998b7",
+          "flows_total": 22,
+          "fts_total_incoming": 141078936,
+          "read_at": "2026-10-27T13:32:24",
+          "source": "https://api.hpc.tools/v1/public/fts/flow?planId=1220&filterBy=sourceOrganizationId:2917&limit=1000"
+        }
+      ]
+    },
+    "claim_1": {
+      "timeline": [
+        {
+          "at": "2026-10-27T13:33:36",
+          "code": "met",
+          "event": "filed",
+          "evidence": "89a327f50ed2fb7c9fdd955fa4167433161c95a5a8be2406a2c24353c470881a",
+          "verdict": "KEPT"
+        },
+        {
+          "at": "2026-10-27T13:33:55",
+          "before": "KEPT",
+          "by": "claimant",
+          "code": "met",
+          "event": "contested",
+          "evidence": "511d0685c38f891e7d9e907ca850ee7480573a7019a1a02b0cd76d7bbfe17110",
+          "verdict": "KEPT"
+        },
+        {
+          "amount": "200000000000000000",
+          "at": "2026-10-27T13:34:08",
+          "event": "settled",
+          "outcome": "stake_to_bond"
+        }
+      ],
+      "packets": [
+        {
+          "packet_sha256": "89a327f50ed2fb7c9fdd955fa4167433161c95a5a8be2406a2c24353c470881a",
+          "flows_sha256": "dce0803d6bdc9ee09a0a481b132855fa116146c0e78cbc2e7ca26504cb3998b7",
+          "flows_total": 22,
+          "fts_total_incoming": 141078936,
+          "read_at": "2026-10-27T13:33:36",
+          "source": "https://api.hpc.tools/v1/public/fts/flow?planId=1220&filterBy=sourceOrganizationId:2917&limit=1000"
+        },
+        {
+          "packet_sha256": "511d0685c38f891e7d9e907ca850ee7480573a7019a1a02b0cd76d7bbfe17110",
+          "flows_sha256": "dce0803d6bdc9ee09a0a481b132855fa116146c0e78cbc2e7ca26504cb3998b7",
+          "flows_total": 22,
+          "fts_total_incoming": 141078936,
+          "read_at": "2026-10-27T13:33:55",
+          "source": "https://api.hpc.tools/v1/public/fts/flow?planId=1220&filterBy=sourceOrganizationId:2917&limit=1000"
+        }
+      ]
+    },
+    "claim_2": {
+      "timeline": [
+        {
+          "at": "2026-10-27T13:34:40",
+          "code": "shortfall",
+          "event": "filed",
+          "evidence": "4e10adb1332830122383a9997f2f547ff6ccd9324ba4fa9f1bbd27214349726a",
+          "verdict": "BREACHED"
+        },
+        {
+          "at": "2026-10-27T13:34:53",
+          "beneficiary": "499980672000000000",
+          "event": "settled",
+          "outcome": "paid",
+          "reporter": "55553408000000000",
+          "share_bp": 2777
+        }
+      ],
+      "packets": [
+        {
+          "packet_sha256": "4e10adb1332830122383a9997f2f547ff6ccd9324ba4fa9f1bbd27214349726a",
+          "flows_sha256": "dce0803d6bdc9ee09a0a481b132855fa116146c0e78cbc2e7ca26504cb3998b7",
+          "flows_total": 22,
+          "fts_total_incoming": 141078936,
+          "read_at": "2026-10-27T13:34:40",
+          "source": "https://api.hpc.tools/v1/public/fts/flow?planId=1220&filterBy=sourceOrganizationId:2917&limit=1000"
+        }
+      ]
+    }
+  },
+  "log": [
+    {
+      "who": "pledger",
+      "call": "create_pledge(\"UK\", \"1220\", 150000000, \"2026-03-31\", \"https://www.gov.uk/government/news/uk-announces-new-humanit, 2 GEN, \"0x1a865B2aA1Ea2555D4Bb1Ac2C68e31F677009929\", \"2027-03-31\")",
+      "value": "2",
+      "hash": "0x8deae18cf1301591728348d2075726d44118bab44deb5d6380c7427efe3587a2",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: donor_id must be an OCHA FTS organization id, like 2917"
+    },
+    {
+      "who": "pledger",
+      "call": "create_pledge(\"2917\", \"999999\", 150000000, \"2026-03-31\", \"https://www.gov.uk/government/news/uk-announces-new-humanit, 2 GEN, \"0x1a865B2aA1Ea2555D4Bb1Ac2C68e31F677009929\", \"2027-03-31\")",
+      "value": "2",
+      "hash": "0x802a56d513f822e93df9ac3dc236b7550e8ab794a7bad6017e6abd2dd0f9c34f",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: OCHA FTS has no plan with that id"
+    },
+    {
+      "who": "pledger",
+      "call": "create_pledge(\"2917\", \"1220\", 150000000, \"2026-03-31\", \"https://www.gov.uk/government/news/uk-announces-new-humanit, 4 GEN, \"0x1a865B2aA1Ea2555D4Bb1Ac2C68e31F677009929\", \"2027-03-31\")",
+      "value": "2",
+      "hash": "0x8d471126622f0b9ebc05d7aab6affb7a880c0f6e805d27ca29d92982798babc7",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: the bond must cover the payout"
+    },
+    {
+      "who": "pledger",
+      "call": "create_pledge(\"2917\", \"1220\", 150000000, \"2026-12-31\", \"https://www.gov.uk/government/news/uk-announces-new-humanit, 2 GEN, \"0x1a865B2aA1Ea2555D4Bb1Ac2C68e31F677009929\", \"2027-01-15\")",
+      "value": "2",
+      "hash": "0xdff55c136cf12ca11126c9aa31bdd9124aefb316d5c4d268bb454148cdd7f664",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: expires must be a YYYY-MM-DD date, not in the past, and 2027-03-01 or later (the deadline, 30 days for FTS reports, then 30 days to claim)"
+    },
+    {
+      "who": "pledger",
+      "call": "create_pledge(\"4306\", \"1220\", 150000000, \"2026-03-31\", \"https://www.gov.uk/government/news/uk-announces-new-humanit, 2 GEN, \"0x1a865B2aA1Ea2555D4Bb1Ac2C68e31F677009929\", \"2027-03-31\")",
+      "value": "2",
+      "hash": "0x42dc75e6764521ebc290335ee7d06632738652212467001ba53771ca058c985c",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: Validators did not read the announcement as a funding pledge from Germany, Government of for this crisis (NO_MATCH)"
+    },
+    {
+      "who": "pledger",
+      "call": "create_pledge(\"2917\", \"1271\", 150000000, \"2026-03-31\", \"https://www.gov.uk/government/news/uk-announces-new-humanit, 2 GEN, \"0x1a865B2aA1Ea2555D4Bb1Ac2C68e31F677009929\", \"2027-03-31\")",
+      "value": "2",
+      "hash": "0x7c7e019733d40e846792d1c60777860bddcd9a304606deaee86e85e8fecc594b",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: Validators did not read the announcement as a funding pledge from United Kingdom, Government of for this crisis (NO_MATCH)"
+    },
+    {
+      "who": "pledger",
+      "call": "create_pledge(\"2917\", \"1220\", 150000000, \"2026-03-31\", \"https://www.gov.uk/government/news/uk-announces-new-humanit, 4 GEN, \"0x1a865B2aA1Ea2555D4Bb1Ac2C68e31F677009929\", \"2027-03-31\")",
+      "value": "4",
+      "hash": "0xc9beb2ab7113a93c502642fa0bb57b91f5552b16d449bf2070691f6a371a5f0e",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "pledge_0"
+    },
+    {
+      "who": "reporter",
+      "call": "file_claim(\"pledge_0\")",
+      "value": "1",
+      "hash": "0xc60349c21098103c74f51c04f79e8146b2a98f6355949577fe21460bd43fcc96",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: A claim on this pledge stakes exactly 400000000000000000 wei (10% of the payout)"
+    },
+    {
+      "who": "reporter",
+      "call": "file_claim(\"pledge_0\")",
+      "value": "0.4",
+      "hash": "0xa59848600cd7fb31019f3e6cd73a8480756ddd61f06598e6dd989dd826163f8c",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "claim_0"
+    },
+    {
+      "who": "bystander",
+      "call": "file_claim(\"pledge_0\")",
+      "value": "0.4",
+      "hash": "0x380a4976b7f4852f040b3971ad2e3e3dcf8d36aa2ffcd9340b1efb5c37a93a03",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: claim_0 is already open for this pledge"
+    },
+    {
+      "who": "reporter",
+      "call": "settle(\"claim_0\")",
+      "value": "0",
+      "hash": "0xc1eb414b78aba65f39f592f59b9f7429c7f06fdc0a65bf48f4df46d1993e078d",
+      "status": "ACCEPTED",
+      "exec": "ERROR",
+      "refused": "The response window is still open; only the pledger can concede early"
+    },
+    {
+      "who": "fund",
+      "call": "settle(\"claim_0\")",
+      "value": "0",
+      "hash": "0x14a8f4d283684a1254e6b817c7366f59e48571f0e27cea294af8d9424ad4643c",
+      "status": "ACCEPTED",
+      "exec": "ERROR",
+      "refused": "The response window is still open; only the pledger can concede early"
+    },
+    {
+      "who": "pledger",
+      "call": "contest(\"claim_0\")",
+      "value": "0",
+      "hash": "0x3b54586cd44b354b2618f42de1332061176b238944a4273504fc7fec28b28452",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "BREACHED"
+    },
+    {
+      "who": "pledger",
+      "call": "create_pledge(\"2917\", \"1220\", 140000000, \"2026-03-31\", \"https://www.gov.uk/government/news/uk-announces-new-humanit, 2 GEN, \"0x1a865B2aA1Ea2555D4Bb1Ac2C68e31F677009929\", \"2027-03-31\")",
+      "value": "2",
+      "hash": "0x6f12e928237e8f14e6244aae3c9aff62eb7989987b642f056d122c235bba5051",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "pledge_1"
+    },
+    {
+      "who": "reporter",
+      "call": "file_claim(\"pledge_1\")",
+      "value": "0.2",
+      "hash": "0xf0d569a6d44f553d0795be74d3824aadcb0f4b60d6c3a2001fef15664433defa",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "claim_1"
+    },
+    {
+      "who": "reporter",
+      "call": "contest(\"claim_1\")",
+      "value": "0",
+      "hash": "0xb5aef89e7e4a2df6ae3a76c02e80869cfaabcaf8eacdd9ea403c5cfe819a959c",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "KEPT"
+    },
+    {
+      "who": "reporter",
+      "call": "settle(\"claim_1\")",
+      "value": "0",
+      "hash": "0xfd991a3011d44b82188e5a6b29c48c65baf5f908ae03bd0a18c6fe8644ef0234",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "stake_to_bond"
+    },
+    {
+      "who": "reporter",
+      "call": "file_claim(\"pledge_1\")",
+      "value": "0.2",
+      "hash": "0x48f9c6462476bca8b50516502a6c9e24b12972e9c4b08eb19c2d5bd83db426d2",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: This pledge has already been ruled and settled (kept)"
+    },
+    {
+      "who": "pledger",
+      "call": "create_pledge(\"2917\", \"1220\", 150000000, \"2025-12-31\", \"https://www.gov.uk/government/news/uk-announces-new-humanit, 2 GEN, \"0x1a865B2aA1Ea2555D4Bb1Ac2C68e31F677009929\", \"2027-03-31\")",
+      "value": "2",
+      "hash": "0xbbf4be5d711418f9fdf4de18544185b72b79d69bb9a936fe19ce936560878aa7",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "pledge_2"
+    },
+    {
+      "who": "reporter",
+      "call": "file_claim(\"pledge_2\")",
+      "value": "0.2",
+      "hash": "0x2cd4aa3e74f67a1f2ff4b8f3e06c91705f71911dd47fb31411de9493c411b93e",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "claim_2"
+    },
+    {
+      "who": "pledger",
+      "call": "settle(\"claim_2\")",
+      "value": "0",
+      "hash": "0x8f1c51095c1b37ac6f5a2deb48da1ca86dcc7ffc9832bfd75c116d3eadd1e795",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "paid"
+    },
+    {
+      "who": "pledger",
+      "call": "create_pledge(\"2917\", \"1220\", 150000000, \"2026-12-31\", \"https://www.gov.uk/government/news/uk-announces-new-humanit, 2 GEN, \"0x1a865B2aA1Ea2555D4Bb1Ac2C68e31F677009929\", \"2027-03-31\")",
+      "value": "2",
+      "hash": "0x9229f52dbdcc101134741109eb3b2c0f00597b4162a58ead0cd8c1e72fabfaed",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "pledge_3"
+    },
+    {
+      "who": "reporter",
+      "call": "file_claim(\"pledge_3\")",
+      "value": "0.2",
+      "hash": "0xda835223aacf8765ea30920fc4cf629c341061eb717c133dac52d416a857545f",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: Claims open on 2027-01-30: FTS needs time to record funding dated up to 2026-12-31"
+    },
+    {
+      "who": "pledger",
+      "call": "withdraw(\"pledge_3\")",
+      "value": "0",
+      "hash": "0x856f2d61f365bdb05c1d8bcfaafcbb66b26b44806fdd8a0520f3561bb1f8e98a",
+      "status": "ACCEPTED",
+      "exec": "ERROR",
+      "refused": "The bond stays until the pledge expires on 2027-03-31"
+    },
+    {
+      "who": "bystander",
+      "call": "settle(\"claim_0\")",
+      "value": "0",
+      "hash": "0x8140726316509eb5c78df34a95c115f1fe251667c2d8402185e2beaf485547bd",
+      "status": "ACCEPTED",
+      "exec": "ERROR",
+      "refused": "The response window is still open; only the pledger can concede early"
+    },
+    {
+      "who": "bystander",
+      "call": "settle(\"claim_0\")",
+      "value": "0",
+      "hash": "0x6bbf24016be590c457f0c9936e26e09a1b2ff1aefdb0c276292ffbb25fcd5eed",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "paid"
+    },
+    {
+      "who": "reporter",
+      "call": "file_claim(\"pledge_0\")",
+      "value": "0.4",
+      "hash": "0x5b9889e2a4a914b0beeb63b0b632cd30daf553aa0d1f614fa90beea9506dcda4",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: This pledge has already been ruled and settled (paid)"
+    }
+  ],
+  "recovered_from_console_log": true
+}
