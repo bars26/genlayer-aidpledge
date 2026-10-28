@@ -139,6 +139,7 @@ function Packet({ n, e }: { n: number; e: EvidencePacket }) {
         <>
           <p className="text-muted-foreground">
             {e.flows_total} incoming flows{e.fts_total_incoming ? `, FTS total ${usdFull(e.fts_total_incoming)}` : ""}
+            {e.pages_read ? `, read over ${e.pages_read} FTS page${e.pages_read === 1 ? "" : "s"} and checked against FTS's totals` : ""}
             {(e.flows_total ?? 0) > e.flows.length ? ` (first ${e.flows.length} stored; all were counted)` : ""}
           </p>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-3">

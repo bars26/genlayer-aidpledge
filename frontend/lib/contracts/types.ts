@@ -98,6 +98,7 @@ export interface EvidencePacket {
   flows_total?: number;
   flows_sha256?: string;
   fts_total_incoming?: number;
+  pages_read?: number;
   read_at?: string;
   packet_sha256?: string;
 }
