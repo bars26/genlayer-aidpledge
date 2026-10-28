@@ -76,7 +76,7 @@ const coverage = Object.entries(run.coverages ?? {}).map(
   ([k, c]) => `| ${k} | ${fmt(c.payout)} | ${fmt(c.liability)} | ${fmt(c.bond)} | ${c.covered ? "yes" : "no"} | ${c.pending_claims} | ${c.outcome || "—"} | ${c.deadline} | ${c.claims_open} | ${c.locked_until} |`
 );
 const packets = Object.entries(run.evidence ?? {}).flatMap(([id, e]) =>
-  e.packets.map((p, i) => `| ${id} #${i + 1} | ${p.read_at ?? ""} | ${p.flows_total ?? 0} | ${p.fts_total_incoming ? "$" + Number(p.fts_total_incoming).toLocaleString("en-US") : "—"} | \`${(p.flows_sha256 || "—").slice(0, 16)}…\` | \`${(p.packet_sha256 || "").slice(0, 16)}…\` |`)
+  e.packets.map((p, i) => `| ${id} #${i + 1} | ${p.read_at ?? ""} | ${p.flows_total ?? 0} | ${p.fts_total_incoming ? "$" + Number(p.fts_total_incoming).toLocaleString("en-US") : "—"} | \`${(p.flows_sha256 || "—").slice(0, 16)}…\` | \`${(p.packet_sha256 || "").slice(0, 16)}…\` | ${p.pages_read ?? "—"} |`)
 );
 const payouts = Object.entries(run.evidence ?? {}).flatMap(([id, e]) =>
   e.timeline.filter((s) => s.event === "settled" && s.outcome === "paid").map((s) => `| ${id} | ${(s.share_bp / 100).toFixed(2)}% | ${fmt(BigInt(s.beneficiary) + BigInt(s.reporter), 4)} | ${fmt(s.beneficiary, 4)} | ${fmt(s.reporter, 4)} |`)
@@ -151,10 +151,11 @@ ${recon.join("\n")}
 
 Every reading stores a packet on the claim (\`evidence_json\`): the FTS query, every incoming flow read (id, status,
 date, USD, first reported), FTS's own incoming total, the flows' sha256, and a hash of the whole packet, which the
-claim's timeline also records.
+claim's timeline also records. Since v1.1 validators read every FTS page (100 flows each) and rule only when the flows
+read match FTS's own totals (\`meta.count\` and the incoming \`flowCount\`); otherwise the reading is UNCLEAR and nothing is paid.
 
-| Claim / reading | Read at (UTC) | Flows | FTS incoming total | Flows sha256 | Packet sha256 |
-|---|---|---|---|---|---|
+| Claim / reading | Read at (UTC) | Flows | FTS incoming total | Flows sha256 | Packet sha256 | FTS pages read |
+|---|---|---|---|---|---|---|
 ${packets.join("\n")}
 
 ## Final state

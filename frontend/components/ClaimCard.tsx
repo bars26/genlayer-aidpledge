@@ -46,7 +46,7 @@ export function ClaimCard({ claim, pledge }: { claim: Claim; pledge: Pledge }) {
         <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-semibold ${v?.cls}`} title={v?.help}>
           {v?.label}
         </span>
-        <span className="font-medium">{f.funded_usd !== undefined && claim.code !== "unreachable" ? `${usd(f.funded_usd)} of ${usd(f.target_usd)}` : "no reading"}</span>
+        <span className="font-medium">{f.funded_usd !== undefined && claim.code !== "unreachable" && claim.code !== "incomplete" ? `${usd(f.funded_usd)} of ${usd(f.target_usd)}` : "no reading"}</span>
         <span className="text-xs text-muted-foreground">{CODE_LABEL[claim.code] ?? claim.code}</span>
         <span className="ml-auto text-xs mono text-muted-foreground">{claim.id}</span>
       </div>

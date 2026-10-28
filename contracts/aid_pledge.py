@@ -25,6 +25,8 @@ _DAY = 86400
 _REPORTING_LAG_DAYS = 30  # donors report to FTS late: claims open this long after the deadline
 _REPORT_DAYS = 30  # and stay open at least this long before the bond can leave
 _MAX_FLOWS_KEPT = 40  # flows stored in an evidence packet; every flow is counted
+_FTS_PAGE = 100  # flows per FTS page (most donor-to-plan lists fit in one or two)
+_FTS_MAX_PAGES = 50  # a donor-to-plan list longer than 5,000 flows is not read partially: it is UNCLEAR
 _HISTORY_LIMIT = 16
 _HEADERS = {"accept": "application/json", "user-agent": "AidPledge/1.0 (GenLayer)"}
 _FTS = "https://api.hpc.tools/v1/public"
@@ -47,6 +49,17 @@ def _sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+def _valid_day(day: str) -> bool:
+    """A real calendar date written YYYY-MM-DD (2026-02-31 is not)."""
+    if not re.match(r"^\d{4}-\d{2}-\d{2}$", day):
+        return False
+    try:
+        datetime.strptime(day, "%Y-%m-%d")
+    except ValueError:
+        return False
+    return True
+
+
 def _day_seconds(day: str) -> int:
     return int(datetime.fromisoformat(day.strip()[:10]).replace(tzinfo=timezone.utc).timestamp())
 
@@ -61,21 +74,28 @@ def _usd(n: int) -> str:
 
 def _fts(url: str) -> tuple:
     """("ok", data) / ("none", None) for a 404 / ("error", status)."""
+    state, data, _meta = _fts_page(url)
+    return state, data
+
+
+def _fts_page(url: str) -> tuple:
+    """Like _fts, plus the response's meta (FTS puts the total flow count and the next page link there)."""
     try:
         response = gl.nondet.web.get(url, headers=_HEADERS)
     except Exception:
-        return "error", 0
+        return "error", 0, {}
     if response.status == 404:
-        return "none", None
+        return "none", None, {}
     if response.status != 200:
-        return "error", response.status
+        return "error", response.status, {}
     try:
         body = json.loads((response.body or b"").decode("utf-8", errors="replace"))
     except ValueError:
-        return "error", 200
+        return "error", 200, {}
     if not isinstance(body, dict) or body.get("status") not in (None, "ok"):
-        return "error", 200
-    return "ok", body.get("data")
+        return "error", 200, {}
+    meta = body.get("meta")
+    return "ok", body.get("data"), meta if isinstance(meta, dict) else {}
 
 
 def _plan(plan_id: str) -> tuple:
@@ -127,6 +147,10 @@ def explain(code: str, f: dict) -> str:
     target, funded = int(f.get("target_usd") or 0), int(f.get("funded_usd") or 0)
     lines = {
         "unreachable": f"OCHA FTS could not be read for {who} and {plan}, which proves nothing; the stake goes back.",
+        "incomplete": (
+            f"OCHA FTS did not return the complete list of flows from {who} to {plan} (it reported {f.get('flows_reported')} "
+            f"and {f.get('flows_read')} were read), so nothing is decided on a partial count; the stake goes back."
+        ),
         "met": (
             f"OCHA FTS records {_usd(funded)} of funding (commitments and payments) from {who} to {plan} dated on or "
             f"before {by}, across {f.get('flows_counted')} flows. The pledged {_usd(target)} was met."
@@ -324,7 +348,7 @@ Respond only with that JSON, without any prefix or suffix.
         donor, plan = pledge.donor_name, json.loads(pledge.plan_json).get("name", pledge.plan_id)
 
         def assess() -> str:
-            query = f"{_FTS}/fts/flow?planId={plan_id}&filterBy=sourceOrganizationId:{donor_id}&limit=1000"
+            query = f"{_FTS}/fts/flow?planId={plan_id}&filterBy=sourceOrganizationId:{donor_id}&limit={_FTS_PAGE}"
             facts = {"donor": donor, "plan": plan, "deadline": deadline, "target_usd": target, "funded_usd": 0,
                      "flows_counted": 0, "after_deadline_usd": 0, "pledged_only_usd": 0, "shortfall_usd": 0, "shortfall_bp": 0}
             evidence = {"source": query, "record": f"https://fts.unocha.org/plans/{plan_id}/summary"}
@@ -336,11 +360,38 @@ Respond only with that JSON, without any prefix or suffix.
                 return json.dumps({"verdict": verdict, "code": code, "facts": facts, "evidence": evidence,
                                    "why": explain(code, facts)}, sort_keys=True)
 
-            state, data = _fts(query)
-            if state == "none":  # FTS answers an empty filter with flowCount 0, not a 404; a 404 means the endpoint failed
-                state = "error"
-            if state != "ok" or not isinstance(data, dict) or not isinstance(data.get("flows"), list):
-                return done("UNCLEAR", "unreachable", [])
+            # Read every page. A shortfall is only computed from the complete set of flows: FTS reports the total
+            # (meta.count) and the incoming count, and both must match what was read, or the reading is UNCLEAR.
+            by_id, reported, incoming_reported, incoming_total, page = {}, None, None, 0, 0
+            while True:
+                page += 1
+                if page > _FTS_MAX_PAGES:
+                    facts.update(flows_reported=reported, flows_read=len(by_id))
+                    return done("UNCLEAR", "incomplete", [])
+                state, data, meta = _fts_page(f"{query}&page={page}")
+                if state == "none":  # FTS answers an empty filter with count 0, not a 404; a 404 means the endpoint failed
+                    state = "error"
+                if state != "ok" or not isinstance(data, dict) or not isinstance(data.get("flows"), list):
+                    return done("UNCLEAR", "unreachable", [])
+                count = meta.get("count")
+                if not isinstance(count, int) or (reported is not None and count != reported):
+                    facts.update(flows_reported=count if isinstance(count, int) else None, flows_read=len(by_id))
+                    return done("UNCLEAR", "incomplete", [])  # no total, or the total changed while paging
+                if reported is None:
+                    reported = count
+                    incoming = data.get("incoming") or {}
+                    incoming_reported = incoming.get("flowCount")
+                    incoming_total = int(incoming.get("fundingTotal") or 0)
+                for f in data["flows"]:
+                    by_id[str(f.get("id") or "")] = f
+                if not meta.get("nextLink") or not data["flows"]:
+                    break
+            n_incoming = sum(1 for f in by_id.values() if f.get("boundary") == "incoming")
+            facts.update(flows_reported=reported, flows_read=len(by_id))
+            if "" in by_id or len(by_id) != reported or (isinstance(incoming_reported, int) and n_incoming != incoming_reported):
+                return done("UNCLEAR", "incomplete", [])
+            evidence["pages_read"] = page
+            data = {"flows": [by_id[k] for k in sorted(by_id)], "incoming": {"fundingTotal": incoming_total}}
             flows = []
             for f in data["flows"]:
                 if f.get("boundary") != "incoming":
@@ -401,8 +452,8 @@ Respond only with that JSON, without any prefix or suffix.
         if not re.match(r"^\d+$", target_txt) or int(target_txt) < _MIN_TARGET_USD:
             return self._reject(f"target_usd must be a whole number of dollars, at least {_MIN_TARGET_USD}")
         deadline, expires, url = self._text(deadline), self._text(expires), self._text(announcement_url)
-        if not re.match(r"^\d{4}-\d{2}-\d{2}$", deadline):
-            return self._reject("deadline must be a YYYY-MM-DD date")
+        if not _valid_day(deadline):
+            return self._reject("deadline must be a real calendar date written YYYY-MM-DD")
         if not re.match(r"^https://\S+$", url) or len(url) > 300:
             return self._reject("announcement_url must be an https:// link of at most 300 characters")
         if not re.match(r"^\d+$", payout_txt) or int(payout_txt) < _MIN_PAYOUT:
@@ -414,7 +465,7 @@ Respond only with that JSON, without any prefix or suffix.
         if beneficiary_addr == _ZERO:
             return self._reject("beneficiary must be a wallet address")
         mature_by = _day(_day_seconds(deadline) + (_REPORTING_LAG_DAYS + _REPORT_DAYS) * _DAY)
-        if not re.match(r"^\d{4}-\d{2}-\d{2}$", expires) or expires < self._today() or expires < mature_by:
+        if not _valid_day(expires) or expires < self._today() or expires < mature_by:
             return self._reject(f"expires must be a YYYY-MM-DD date, not in the past, and {mature_by} or later "
                                 f"(the deadline, {_REPORTING_LAG_DAYS} days for FTS reports, then {_REPORT_DAYS} days to claim)")
         value = int(gl.message.value)

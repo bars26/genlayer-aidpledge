@@ -25,14 +25,22 @@ function client(account) {
 }
 
 async function rpc(method, params) {
-  const res = await fetch(RPC, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-  });
-  const body = await res.json();
-  if (body.error) throw new Error(`${method}: ${body.error.message}`);
-  return body.result;
+  // Studio sometimes answers with an HTML error page; these calls are reads or idempotent top-ups, so retry them.
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const res = await fetch(RPC, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+      });
+      const body = await res.json();
+      if (body.error) throw new Error(`${method}: ${body.error.message}`);
+      return body.result;
+    } catch (err) {
+      if (attempt >= 5 || /^\w+: /.test(String(err?.message))) throw err;
+      await new Promise((r) => setTimeout(r, 10000 * attempt));
+    }
+  }
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -189,6 +197,8 @@ const GERMANY = "4306"; // Germany, Government of
 const SUDAN = "1220"; // Sudan Humanitarian Needs and Response Plan 2025
 const UKRAINE = "1271"; // Ukraine Humanitarian Needs and Response Plan 2025
 const ANNOUNCEMENT = "https://www.gov.uk/government/news/uk-announces-new-humanitarian-funding-for-sudan"; // 15 April 2025, GBP 120M
+const ECHO = "8523"; // European Commission's Humanitarian Aid and Civil Protection Department: 181 flows to the Sudan plan, two FTS pages
+const ECHO_ANNOUNCEMENT = "https://north-africa-middle-east-gulf.ec.europa.eu/news/eu-announces-eu2825-million-humanitarian-aid-chad-and-sudan-crisis-2025-04-10_en"; // 10 April 2025, EUR 160M inside Sudan
 const UNTIL = "2027-03-31";
 const pledge = (donor, plan, target, by, payout, bond, url = ANNOUNCEMENT, until = UNTIL) =>
   write(P, "pledger", "create_pledge", [donor, plan, target, by, url, payout, acct.fund.address, until], bond);
@@ -200,6 +210,8 @@ await pledge(UK, SUDAN, 150_000_000, "2026-03-31", 4n * GEN, 2n * GEN); // bond 
 await pledge(UK, SUDAN, 150_000_000, "2026-12-31", 2n * GEN, 2n * GEN, ANNOUNCEMENT, "2027-01-15"); // ends before FTS reports and claims
 await pledge(GERMANY, SUDAN, 150_000_000, "2026-03-31", 2n * GEN, 2n * GEN); // a UK announcement cited for Germany
 await pledge(UK, UKRAINE, 150_000_000, "2026-03-31", 2n * GEN, 2n * GEN); // a Sudan announcement cited for Ukraine
+await pledge(UK, SUDAN, 150_000_000, "2026-02-31", 2n * GEN, 2n * GEN); // no such calendar date
+await reconcile("after the refused pledges: the contract kept nothing");
 
 // P0: UK funding to the Sudan plan, at least $150M by 2026-03-31 (FTS records ~$141.1M): partial shortfall.
 console.log("");
@@ -244,6 +256,14 @@ coverages[pid(3)] = JSON.parse(await read(P, "coverage", [pid(3)]));
 console.log(`  coverage(${pid(3)}) = ${JSON.stringify(coverages[pid(3)])}`);
 await reconcile("before the response window closes");
 
+// P4: ECHO funding to the Sudan plan, at least $120M by 2026-03-31. FTS lists ECHO's 181 flows on two pages of 100:
+// all of them add up to ~$123.8M (met); page 1 alone would give ~$71.3M, a false shortfall.
+console.log("");
+await pledge(ECHO, SUDAN, 120_000_000, "2026-03-31", 2n * GEN, 2n * GEN, ECHO_ANNOUNCEMENT);
+const s4 = BigInt(await read(P, "stake_for", [pid(4)]));
+claims.push(await file("reporter", R, pid(4), "P4 ECHO to Sudan, $120M by 2026-03-31 (two FTS pages)", s4));
+await write(R, "reporter", "settle", [claims.at(-1)]); // the reporter accepts the reading: the stake joins the bond
+
 // After the response window, anyone settles the open shortfall.
 console.log("\nwaiting 10 minutes for the response window...");
 await write(B, "bystander", "settle", [c0], 0n, { expectError: true });
@@ -253,7 +273,7 @@ await write(R, "reporter", "file_claim", [pid(0)], s0); // paid once: refunded
 coverages[`${pid(0)} after settling`] = JSON.parse(await read(P, "coverage", [pid(0)]));
 
 await reconcile("end of run");
-const N = 4;
+const N = 5;
 console.log("\nfinal pledges:");
 for (let n = 0; n < N; n++) {
   const p = await read(P, "get_pledge", [pid(n)]);
@@ -264,7 +284,7 @@ for (const id of claims.filter(Boolean)) {
   console.log(`  explain_claim(${id}) = ${await read(P, "explain_claim", [id])}`);
   const c = await read(P, "get_claim", [id]);
   const packets = JSON.parse(field(c, "evidence_json"));
-  evidence[id] = { timeline: JSON.parse(field(c, "timeline_json")), packets: packets.map((e) => ({ packet_sha256: e.packet_sha256, flows_sha256: e.flows_sha256, flows_total: e.flows_total, fts_total_incoming: e.fts_total_incoming, read_at: e.read_at, source: e.source })) };
+  evidence[id] = { timeline: JSON.parse(field(c, "timeline_json")), packets: packets.map((e) => ({ packet_sha256: e.packet_sha256, flows_sha256: e.flows_sha256, flows_total: e.flows_total, fts_total_incoming: e.fts_total_incoming, pages_read: e.pages_read, read_at: e.read_at, source: e.source })) };
 }
 const announcement = JSON.parse(field(await read(P, "get_pledge", [pid(0)]), "announcement_json"));
 console.log(`  announcement of ${pid(0)}: ${announcement.answer} sha256=${announcement.sha256} "${announcement.excerpt.slice(0, 120)}..."`);

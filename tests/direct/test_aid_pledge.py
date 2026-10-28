@@ -58,16 +58,35 @@ PAGE = ("<html><head><style>.x{}</style></head><body><div class='cookie-banner'>
         f"<main id='main-content'>{BODY}<script>track()</script></main><footer>Footer</footer></body></html>")
 
 
+FLOW_QUERY = f"{FTS}/fts/flow?planId={SUDAN}&filterBy=sourceOrganizationId:{UK}&limit=100"
+
+
+def _flow_pages(direct_vm, flows, status=200, page_size=100, count=None, incoming_count=None, pages=None, statuses=None,
+                counts=None, last_has_next=False):
+    """Mock FTS's paged flow list: meta.count is the total, meta.nextLink is present on every page but the last.
+    The keyword arguments let a test make the response inconsistent (wrong totals, a missing or failing page)."""
+    chunks = pages if pages is not None else ([flows[i:i + page_size] for i in range(0, len(flows), page_size)] or [[]])
+    total = len(flows) if count is None else count
+    n_in = sum(1 for f in flows if f["boundary"] == "incoming") if incoming_count is None else incoming_count
+    funded = sum(f["amountUSD"] for f in flows if f["boundary"] == "incoming" and f["status"] in ("paid", "commitment"))
+    for i, chunk in enumerate(chunks, start=1):
+        meta = {"language": "en", "count": (counts or {}).get(i, total)}
+        if i < len(chunks) or last_has_next:
+            meta["nextLink"] = f"{FLOW_QUERY}&page={i + 1}"
+        _mock(direct_vm, f"{FLOW_QUERY}&page={i}", {"status": "ok", "meta": meta, "data": {
+            "incoming": {"flowCount": n_in, "fundingTotal": funded}, "outgoing": {}, "internal": {}, "flows": chunk}},
+            (statuses or {}).get(i, status))
+
+
 def _setup(direct_vm, flows=None, flow_status=200, plan_status=200, donor_status=200, page_status=200, answer="MATCH", donor_flows=None,
-           page=PAGE):
+           page=PAGE, fts=None):
     direct_vm.clear_mocks()
     flows = FLOWS if flows is None else flows
     _mock(direct_vm, f"{FTS}/fts/flow?organizationId={UK}&limit=1",
           {"status": "ok", "data": {"flows": [_flow(1001, 1, "2025-06-01")] if donor_flows is None else donor_flows}}, donor_status)
     _mock(direct_vm, f"{FTS}/plan/id/{SUDAN}", {"status": "ok", "data": PLAN} if plan_status == 200 else
           {"status": "notFound", "reason": "NotFoundError"}, plan_status)
-    _mock(direct_vm, f"{FTS}/fts/flow?planId={SUDAN}&filterBy=sourceOrganizationId:{UK}&limit=1000",
-          {"status": "ok", "data": {"incoming": {"fundingTotal": FUNDED + 2_000_000}, "flows": flows}}, flow_status)
+    _flow_pages(direct_vm, flows, flow_status, **(fts or {}))
     _mock(direct_vm, URL, None, page_status, raw=page)
     direct_vm.mock_llm(r".*", json.dumps({"answer": answer}))
 
@@ -123,7 +142,9 @@ def test_pledge_freezes_donor_plan_and_announcement(direct_vm, direct_deploy, di
     (dict(plan_id="HSDN25"), None, "plan_id must be an OCHA FTS plan id"),
     (dict(target_usd=999), None, "target_usd must be a whole number of dollars, at least 1000"),
     (dict(target_usd="1e8"), None, "target_usd must be a whole number"),
-    (dict(deadline="March 2026"), None, "deadline must be a YYYY-MM-DD date"),
+    (dict(deadline="March 2026"), None, "deadline must be a real calendar date written YYYY-MM-DD"),
+    (dict(deadline="2026-02-31"), None, "deadline must be a real calendar date written YYYY-MM-DD"),
+    (dict(expires="2027-13-01"), None, "expires must be a YYYY-MM-DD date"),
     (dict(announcement_url="http://gov.uk/x"), None, "announcement_url must be an https:// link"),
     (dict(payout=GEN // 2), None, "payout must be at least 1 GEN"),
     (dict(beneficiary="nope"), None, "beneficiary must be a wallet address"),
@@ -210,6 +231,71 @@ def test_fts_failures_decide_nothing(direct_vm, direct_deploy, direct_alice, dir
     claim = contract.get_claim(_file(direct_vm, contract, pledge_id, direct_charlie, flow_status=status))
     assert (claim.verdict, claim.code) == ("UNCLEAR", "unreachable")
     assert "proves nothing" in claim.why
+
+
+# --- reading every FTS page --------------------------------------------------------
+
+
+def _payments(contract, monkeypatch):
+    """Record every GEN transfer the contract makes instead of sending it."""
+    import sys
+
+    sent = []
+
+    class Recorder:
+        def __init__(self, to):
+            self.to = to
+
+        def emit_transfer(self, value):
+            sent.append((self.to.as_hex, int(value)))
+
+    monkeypatch.setattr(sys.modules[type(contract).__module__], "_Wallet", Recorder)
+    return sent
+
+
+# 2,345 flows over 24 FTS pages of 100: 2,300 small payments before the deadline, plus pledges, late payments and
+# outgoing flows that must not count. Page 1 alone holds only 100 of the qualifying payments.
+MANY = ([_flow(10_000 + i, 50_000, "2025-07-01") for i in range(2_300)]
+        + [_flow(20_000 + i, 1_000_000, "2025-07-01", status="pledge") for i in range(20)]
+        + [_flow(30_000 + i, 1_000_000, "2026-05-01") for i in range(15)]
+        + [_flow(40_000 + i, 1_000_000, "2025-07-01", boundary="outgoing") for i in range(10)])
+
+
+@pytest.mark.parametrize("target, verdict", [(150_000_000, "BREACHED"), (100_000_000, "KEPT")])
+def test_every_fts_page_is_read_and_every_qualifying_flow_counted(direct_vm, direct_deploy, direct_alice, direct_bob,
+                                                                  direct_charlie, target, verdict):
+    contract, pledge_id = _pledge(direct_vm, direct_deploy, direct_alice, direct_bob, target_usd=target)
+    claim = contract.get_claim(_file(direct_vm, contract, pledge_id, direct_charlie, flows=MANY))
+    facts, packet = json.loads(claim.facts_json), json.loads(claim.evidence_json)[0]
+    assert (facts["flows_reported"], facts["flows_read"], packet["pages_read"]) == (2_345, 2_345, 24)
+    assert (facts["flows_counted"], facts["funded_usd"]) == (2_300, 115_000_000)  # page 1 alone would give 100 and $5M
+    assert (facts["pledged_only_usd"], facts["after_deadline_usd"]) == (20_000_000, 15_000_000)
+    assert claim.verdict == verdict  # a $100M target is met only because pages 2 to 24 were read
+    if verdict == "BREACHED":
+        assert facts["shortfall_usd"] == 35_000_000 and facts["shortfall_bp"] == 2333
+
+
+@pytest.mark.parametrize("fts, code", [
+    (dict(pages=[MANY[:100]], count=2_345), "incomplete"),  # FTS reports 2,345 flows but gives no next page
+    (dict(statuses={2: 503}), "unreachable"),  # page 2 fails
+    (dict(counts={13: 2_346}), "incomplete"),  # the total changed while paging
+    (dict(incoming_count=2_400), "incomplete"),  # fewer incoming flows read than FTS reports
+    (dict(pages=[MANY[:100], [], MANY[100:]]), "incomplete"),  # an empty page in the middle stops the read short
+    (dict(pages=[[f] for f in MANY[:50]], count=51, last_has_next=True), "incomplete"),  # more than 50 pages
+])
+def test_an_incomplete_fts_reading_never_pays(direct_vm, direct_deploy, direct_alice, direct_bob, direct_charlie, monkeypatch, fts, code):
+    contract, pledge_id = _pledge(direct_vm, direct_deploy, direct_alice, direct_bob)
+    sent = _payments(contract, monkeypatch)
+    stake = int(contract.stake_for(pledge_id))
+    claim_id = _file(direct_vm, contract, pledge_id, direct_charlie, flows=MANY, fts=fts)
+    claim = contract.get_claim(claim_id)
+    assert (claim.verdict, claim.code) == ("UNCLEAR", code)
+    assert "the stake goes back" in claim.why
+    _expire(contract, claim_id)
+    assert contract.settle(claim_id) == "stake_returned"
+    assert sent == [(to_hex(direct_charlie), stake)]  # only the reporter's stake moved: no payout on a partial count
+    p = contract.get_pledge(pledge_id)
+    assert (int(p.bond), int(p.total_paid)) == (4 * GEN, 0)
 
 
 # --- filing --------------------------------------------------------------------
@@ -350,9 +436,9 @@ def test_every_reading_keeps_an_evidence_packet(direct_vm, direct_deploy, direct
     contract, pledge_id = _pledge(direct_vm, direct_deploy, direct_alice, direct_bob)
     claim = contract.get_claim(_file(direct_vm, contract, pledge_id, direct_charlie))
     packet = json.loads(claim.evidence_json)[0]
-    assert packet["source"] == f"{FTS}/fts/flow?planId={SUDAN}&filterBy=sourceOrganizationId:{UK}&limit=1000"
+    assert packet["source"] == FLOW_QUERY
     assert packet["record"] == f"https://fts.unocha.org/plans/{SUDAN}/summary"
-    assert (packet["flows_total"], packet["fts_total_incoming"]) == (5, FUNDED + 2_000_000)
+    assert (packet["flows_total"], packet["fts_total_incoming"], packet["pages_read"]) == (5, FUNDED + 2_000_000, 1)
     assert [f["id"] for f in packet["flows"]] == ["1004", "1001", "1002", "1003", "1005"]  # by date; the outgoing flow is left out
     assert packet["flows"][1] == {"id": "1001", "status": "paid", "date": "2025-06-01", "usd": 14_900_000, "reported": "2025-06-01"}
     assert packet["flows_sha256"] == _sha(json.dumps(packet["flows"], sort_keys=True))

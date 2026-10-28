@@ -35,7 +35,7 @@ AidPledge puts money behind an announced pledge:
 what FTS records, against a target, without a wallet. Writes need MetaMask on GenLayer Studio (chain 61999); **Test GEN**
 funds your wallet.
 
-**Contract:** [`0xA51aE3DBecF765A554479B5f8f83aaeB374872C7`](https://explorer-studio.genlayer.com/address/0xA51aE3DBecF765A554479B5f8f83aaeB374872C7) on GenLayer Studio.
+**Contract:** [`0xDE5Ec07ed37E5677792833337CF3F5992fc6f0d2`](https://explorer-studio.genlayer.com/address/0xDE5Ec07ed37E5677792833337CF3F5992fc6f0d2) on GenLayer Studio.
 
 ## Why GenLayer
 
@@ -49,7 +49,7 @@ Two parts of this cannot be done by an ordinary oracle:
 
 ## Verified live, on OCHA FTS's real records
 
-`scripts/demo.mjs` ran demo pledges (made by a test wallet, not by any government) backing the UK's announced funding
+`scripts/demo.mjs` ran demo pledges (made by a test wallet, not by any government) backing the UK's (and, for the two-page case, the EU's) announced funding
 for Sudan, with **demo targets** chosen to show each ruling, real validator consensus and real LLM calls. Every
 transaction hash, the coverage reads, the balance reconciliation and every evidence packet are in
 [`docs/REPRODUCTION.md`](docs/REPRODUCTION.md).
@@ -65,12 +65,14 @@ Needs and Response Plan 2025 (FTS plan 1220).
 | UK → Sudan 2025, **$140M by 2026-03-31** | $141,078,936 | **Delivered**: *"…The pledged $140,000,000 was met."* The reporter's fresh reading confirmed it; the stake joined the bond, and a second claim was refused |
 | UK → Sudan 2025, **$150M by 2025-12-31** | $108,334,944 | **Fell short** by 27.77%; the pledger conceded at once: **0.556 GEN** paid (27.77% of 2 GEN) |
 | UK → Sudan 2025, $150M by 2026-12-31 | not due | the claim was refunded (claims open 2027-01-30); the pledger's `withdraw` was refused |
+| **ECHO → Sudan 2025, $120M by 2026-03-31**, citing the EU's [10 April 2025 announcement](https://north-africa-middle-east-gulf.ec.europa.eu/news/eu-announces-eu2825-million-humanitarian-aid-chad-and-sudan-crisis-2025-04-10_en) | $123,825,492 in 107 qualifying flows, out of 181 flows that FTS lists on **two pages** | **Delivered**: validators read both pages (181 of 181 flows, matching FTS's totals). Page 1 alone would have counted about $71.3M: a false shortfall that v1.0 would have paid |
 
 Also refused on-chain, with the GEN sent back: a donor id that is not a number, a plan FTS does not have, a bond below
 the payout, a pledge ending before reports and claims can come in, **the UK announcement cited for Germany**
-(`NO_MATCH`), **the Sudan announcement cited for the Ukraine plan** (`NO_MATCH`), a claim with the wrong stake, a second
-claim while one is open, and a claim on a pledge already ruled and paid. The contract's balance was reconciled with
-`totals()` (active bonds plus open stakes) at three points of the run, each time after every transfer had finalized.
+(`NO_MATCH`), **the Sudan announcement cited for the Ukraine plan** (`NO_MATCH`), a deadline of 2026-02-31, a claim with
+the wrong stake, a second claim while one is open, and a claim on a pledge already ruled and paid. The contract's balance
+was reconciled with `totals()` (active bonds plus open stakes) at four points of the run, each time after every transfer
+had finalized.
 
 **From the live app with MetaMask**, a tester backed the same $150M target by 2026-03-31, reported the shortfall and
 conceded: validators ruled 5.94% short and paid **0.1189 GEN** pro rata, all three transactions `FINALIZED` with
@@ -87,9 +89,10 @@ conceded: validators ruled 5.94% short and paid **0.1189 GEN** pro rata, all thr
 | The bond covers the whole payout; a pledge pays once; a pledge ruled delivered is closed | A confirmed shortfall is always paid in full; no double payouts |
 | A shortfall pays pro rata to the gap | A 1% miss does not cost the same as a broken promise |
 | FTS failures (and malformed answers) are `UNCLEAR` and return the stake | An outage never decides a ruling |
+| Validators read **every page** of FTS's flow list (100 per page, up to 50 pages) and rule only if the flows read match FTS's own totals (`meta.count` and the incoming `flowCount`); otherwise `UNCLEAR` (`incomplete`) and nothing is paid | A shortfall is never computed from part of the record |
 | Only the side a ruling goes against contests, once per side; every contest restarts the window | A late FTS report can still be read; nobody spends the other side's only answer |
 | Early settlement only against your own interest (the pledger concedes, the reporter accepts) | The reporter or beneficiary cannot rush a payout; the pledger cannot rush taking a stake |
-| Payable calls never revert; they refund and return `REFUNDED: <reason>` | GenLayer keeps the value of a reverted call |
+| Payable calls never revert; they refund and return `REFUNDED: <reason>`, including for dates that do not exist (2026-02-31) | GenLayer keeps the value of a reverted call |
 
 ## The app
 
@@ -111,7 +114,7 @@ conceded: validators ruled 5.94% short and paid **0.1189 GEN** pro rata, all thr
 ```bash
 pip install -r requirements.txt
 genvm-lint check contracts/aid_pledge.py
-pytest tests/direct/ -v                     # 40 tests, FTS, the announcement and the LLM mocked
+pytest tests/direct/ -v                     # 50 tests, FTS, the announcement and the LLM mocked
 
 npm install
 node scripts/deploy.mjs
@@ -121,6 +124,19 @@ node scripts/reproduction.mjs               # regenerate docs/REPRODUCTION.md
 
 cd frontend && cp .env.example .env.local && npm run dev
 ```
+
+## Changes in v1.1 (after steward review)
+
+- **Every FTS page is read, and a partial list decides nothing.** v1.0 asked FTS for one page of up to 1,000 flows. Now
+  each validator follows FTS's paging (100 flows per page, up to 50 pages), keeps each flow once by id, and computes a
+  verdict only if the number of flows read equals FTS's `meta.count` and the incoming flows equal FTS's incoming
+  `flowCount`. A missing or failing page, a total that changes while paging, an empty page in the middle or more than
+  50 pages make the reading `UNCLEAR` with code `incomplete`: the reporter's stake goes back and nothing is paid.
+  `test_every_fts_page_is_read_and_every_qualifying_flow_counted` reads 2,345 flows over 24 pages (page 1 alone would
+  count $5M of $115M) and `test_an_incomplete_fts_reading_never_pays` covers each inconsistency, checking that only
+  the stake moved. The wallet-free funding check in the app reads FTS the same way.
+- **Impossible dates are refunded.** `deadline` and `expires` are checked against the calendar before any date
+  arithmetic, so `2026-02-31` returns `REFUNDED: ...` instead of raising and keeping the bond.
 
 ## Limits, stated plainly
 
