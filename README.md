@@ -110,6 +110,10 @@ the UK's**. Every payout was credited; the beneficiary, the reporter and the ple
 was refused (*"Nothing to withdraw"*). `totals()` matched the contract's on-chain balance at six points on Studio and
 three on Bradbury, each after every transfer had finalized.
 
+A MetaMask test from the live app on Bradbury (the app deposits first, then backs a $200M pledge with `GB-GOV-1`,
+reports the shortfall, concedes it and withdraws) was decided 5/5 at every step: **Fell short, 19.64%**, 0.1965 GEN
+paid from the bond, 0.2965 GEN withdrawn. Its six transactions are in `docs/ui-test.json` and in REPRODUCTION.
+
 ## Who can do what (and the attacks this blocks)
 
 | Rule | Why |

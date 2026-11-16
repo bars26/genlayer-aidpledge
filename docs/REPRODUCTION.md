@@ -162,6 +162,19 @@ Accounts: pledger `0x8A52cD7EE73EA27BFA45BD908607860a24E661F8`, reporter `0x1cfF
 | both claims settled, every share credited | 1.8035 | 0.0000 | 1.4965 | 3.3000 | 3.3000 | yes |
 | end of run, after the withdrawals | 1.8035 | 0.0000 | 0.0000 | 1.8035 | 1.8035 | yes |
 
+## Wallet test from the live app
+
+MetaMask test from the production app (aidpledge-bars26.vercel.app) on Bradbury testnet, contract 0xa32C73fd75FC2e5b52484fCE2B8758D046CbA62F, five validators per transaction. The tester backs a demo pledge of $200M from the UK to the Sudan 2025 plan by 2026-03-31, with the UK's IATI publisher GB-GOV-1 as the second source and their own wallet as the beneficiary, then reports the shortfall, concedes it and withdraws. The app deposits what each write needs before sending it; the writes themselves send no GEN. Every step was decided 5/5. Wallet `0x4f80b5c475fced34fc9a07ffccf39e1adc1406bf`.
+
+| Step | GEN sent | Result | Tx |
+|---|---|---|---|
+| Deposit 1 GEN (sent by the app before backing the pledge) | 1 GEN | credited to the tester; 5/5 | [`0xac196ef4…`](https://explorer-bradbury.genlayer.com/tx/0xac196ef4b2d0655d45479d4c8dc7186656ebd1e32662acfe002f88d561fe5a95) |
+| Back a pledge: UK to Sudan HNRP 2025, $200M by 2026-03-31, IATI GB-GOV-1, payout 1 GEN, bond 1 GEN from the deposit |  | pledge_2 active, 5/5: validators read the GOV.UK release as MATCH for donor 2917 and plan 1220 and agreed GB-GOV-1 (FCDO) is the UK; plan country SD | [`0x7d7c539b…`](https://explorer-bradbury.genlayer.com/tx/0x7d7c539be5bc01927784a7b85b247cfa1073821f74b4c2cb1524efb05e0f631a) |
+| Deposit the 0.1 GEN stake (sent by the app before reporting) | 0.1 GEN | credited to the tester; 5/5 | [`0x2f00ec3c…`](https://explorer-bradbury.genlayer.com/tx/0x2f00ec3cbad6c712ea0c1afc966f60be2c6bb6be9cfeea970817dab937f2dd56) |
+| Report a shortfall on pledge_2 |  | claim_2 BREACHED, 5/5: FTS $141,078,936 in 22 flows (all read, matching FTS's count); the UK's own IATI reports $160,709,747 in 14 activities; the larger is $39,290,253 short of $200M (19.64%) | [`0x91091e9d…`](https://explorer-bradbury.genlayer.com/tx/0x91091e9da66cb3a5a397ac8ec9f15cd61abf4a337d63e71ce46f219a2ca18e07) |
+| Concede and pay now (settle claim_2 as the pledger) |  | paid, 5/5: 0.1965 GEN of the bond (19.64%) credited, 0.1768 GEN to the beneficiary and 0.0196 GEN to the reporter, plus the 0.1 GEN stake back; 0.8035 GEN stays bonded | [`0x9370d551…`](https://explorer-bradbury.genlayer.com/tx/0x9370d551bd33bca4273ba351411345756dbea14c5a3d9f52e52deaa18fe256d2) |
+| Withdraw |  | 0.2965 GEN sent to the tester, 5/5; owed_to back to 0; totals() expected balance 2.6071 GEN equals the contract balance | [`0xe626b2b0…`](https://explorer-bradbury.genlayer.com/tx/0xe626b2b060945ddaaff880ad3e210794405667c112298d75ccd608371db18b4d) |
+
 
 ## Every transaction (Studio)
 
