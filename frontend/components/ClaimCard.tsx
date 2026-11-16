@@ -65,7 +65,21 @@ export function ClaimCard({ claim, pledge }: { claim: Claim; pledge: Pledge }) {
           <Fact k="Shortfall" v={f.shortfall_usd ? `${usdFull(f.shortfall_usd)} (${((f.shortfall_bp ?? 0) / 100).toFixed(2)}%)` : "—"} />
           <Fact k="Dated after the deadline" v={f.after_deadline_usd ? usdFull(f.after_deadline_usd) : "—"} />
           <Fact k="Only pledged" v={f.pledged_only_usd ? usdFull(f.pledged_only_usd) : "—"} />
+          {f.iati_publisher !== undefined && (
+            <>
+              <Fact k="Donor's own IATI reports" v={`${usdFull(f.iati_usd)} in ${f.iati_activities} activities`} />
+              <Fact k="IATI publisher" v={`${f.iati_publisher}`} />
+              <Fact k="IATI window" v={`${f.iati_country}, ${f.iati_from} to ${f.deadline}`} />
+            </>
+          )}
         </dl>
+        {f.iati_publisher !== undefined && (
+          <p className="mt-2">
+            Second source: humanitarian disbursements and expenditures (DAC 720/730/740) the donor itself published to IATI for the
+            plan&apos;s country. A shortfall is paid only for the gap both sources show; if the donor&apos;s own reports cover the
+            pledge, nothing is paid.
+          </p>
+        )}
         {packets.length > 0 && (
           <div className="mt-3 space-y-2">
             <p className="font-medium text-foreground">Evidence packets (one per reading, stored on-chain)</p>
@@ -135,10 +149,18 @@ function Packet({ n, e }: { n: number; e: EvidencePacket }) {
           {e.source}
         </a>
       </p>
+      {e.iati_source && (
+        <p>
+          IATI query (d-portal):{" "}
+          <a href={e.iati_source} target="_blank" rel="noopener noreferrer" className="text-[#14213D] break-all hover:underline">
+            {e.iati_source}
+          </a>
+        </p>
+      )}
       {e.flows?.length ? (
         <>
           <p className="text-muted-foreground">
-            {e.flows_total} incoming flows{e.fts_total_incoming ? `, FTS total ${usdFull(e.fts_total_incoming)}` : ""}
+            {e.flows_total} incoming flows
             {e.pages_read ? `, read over ${e.pages_read} FTS page${e.pages_read === 1 ? "" : "s"} and checked against FTS's totals` : ""}
             {(e.flows_total ?? 0) > e.flows.length ? ` (first ${e.flows.length} stored; all were counted)` : ""}
           </p>

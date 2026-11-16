@@ -1,24 +1,21 @@
 "use client";
 
 import { createClient } from "genlayer-js";
-import { DEFAULT_CONTRACT_ADDRESS } from "../config";
 import { studionet } from "genlayer-js/chains";
 import { createWalletClient, custom, type WalletClient } from "viem";
+import { currentNetwork } from "../network";
 
-// GenLayer Network Configuration (from environment variables with fallbacks)
-export const GENLAYER_CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_GENLAYER_CHAIN_ID || "61999");
+// The page's GenLayer network (Bradbury testnet or GenLayer Studio, see lib/network.ts).
+const NET = currentNetwork();
+export const GENLAYER_CHAIN_ID = NET.chainId;
 export const GENLAYER_CHAIN_ID_HEX = `0x${GENLAYER_CHAIN_ID.toString(16).toUpperCase()}`;
 
 export const GENLAYER_NETWORK = {
   chainId: GENLAYER_CHAIN_ID_HEX,
-  chainName: process.env.NEXT_PUBLIC_GENLAYER_CHAIN_NAME || "GenLayer Studio",
-  nativeCurrency: {
-    name: process.env.NEXT_PUBLIC_GENLAYER_SYMBOL || "GEN",
-    symbol: process.env.NEXT_PUBLIC_GENLAYER_SYMBOL || "GEN",
-    decimals: 18,
-  },
-  rpcUrls: [process.env.NEXT_PUBLIC_GENLAYER_RPC_URL || "https://studio.genlayer.com/api"],
-  blockExplorerUrls: [],
+  chainName: NET.chainName,
+  nativeCurrency: { name: "GEN", symbol: "GEN", decimals: 18 },
+  rpcUrls: [NET.rpc],
+  blockExplorerUrls: [NET.explorer],
 };
 
 // Ethereum provider type from window
@@ -39,16 +36,14 @@ declare global {
  * Get the GenLayer RPC URL from environment variables
  */
 export function getStudioUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_GENLAYER_RPC_URL || "https://studio.genlayer.com/api"
-  );
+  return currentNetwork().rpc;
 }
 
 /**
  * Get the contract address from environment variables
  */
 export function getContractAddress(): string {
-  return process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || DEFAULT_CONTRACT_ADDRESS;
+  return currentNetwork().contract;
 }
 
 /**

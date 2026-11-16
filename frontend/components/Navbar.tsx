@@ -4,6 +4,8 @@ import { Plus } from "lucide-react";
 import { AccountPanel } from "./AccountPanel";
 import { BrandMark } from "./BrandMark";
 import { FaucetButton } from "./FaucetButton";
+import { NetworkSwitch } from "./NetworkSwitch";
+import { WrongNetwork } from "./WrongNetwork";
 import { Button } from "./ui/button";
 
 export function Navbar({ onPledge }: { onPledge: () => void }) {
@@ -15,6 +17,8 @@ export function Navbar({ onPledge }: { onPledge: () => void }) {
           <span className="display text-2xl">AidPledge</span>
         </a>
         <div className="flex items-center gap-2 sm:gap-3">
+          <NetworkSwitch />
+          <WrongNetwork />
           <FaucetButton />
           <Button size="sm" onClick={onPledge}>
             <Plus className="w-4 h-4" />

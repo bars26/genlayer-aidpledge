@@ -62,6 +62,13 @@ export function PledgeCard({ pledge, claims }: { pledge: Pledge; claims: Claim[]
                 <span className="mono">{pledge.id}</span>
                 <span>·</span>
                 <span>{plan.locations.join(", ")}</span>
+                {pledge.iati_ref ? (
+                  <span className="rounded-full border border-[#B3DCC8] bg-[#DCEFE6] px-2 py-0.5 text-[#1E6A4E]" title={`Second source: ${pledge.iati_name}'s IATI reports for ${pledge.iati_country}`}>
+                    FTS + IATI {pledge.iati_ref}
+                  </span>
+                ) : (
+                  <span className="rounded-full border border-border px-2 py-0.5">FTS only</span>
+                )}
                 {!active && <span className="rounded-full border border-border px-2 py-0.5">closed</span>}
                 {pledge.outcome && <span className="rounded-full border border-border px-2 py-0.5">{pledge.outcome === "paid" ? "shortfall paid" : "ruled delivered"}</span>}
               </div>
@@ -155,15 +162,15 @@ export function PledgeCard({ pledge, claims }: { pledge: Pledge; claims: Claim[]
 
           <div className="flex flex-wrap gap-2">
             {active && !pledge.outcome && <FileClaimModal pledge={pledge} claims={claims} live={live} />}
-            {isPledger && active && (
+            {active && todayUtc() > pledge.expires && (
               <Button
                 size="sm"
                 variant="ghost"
-                disabled={todayUtc() <= pledge.expires || open.length > 0 || pending === `withdraw:${pledge.id}`}
+                disabled={todayUtc() <= pledge.expires || open.length > 0 || pending === `release:${pledge.id}`}
                 title={todayUtc() <= pledge.expires ? `Locked until the pledge expires on ${pledge.expires}.` : open.length ? "Settle the open claims first." : ""}
-                onClick={() => write({ kind: "withdraw", pledgeId: pledge.id })}
+                onClick={() => write({ kind: "release", pledgeId: pledge.id })}
               >
-                Withdraw bond
+                Release the bond
               </Button>
             )}
           </div>

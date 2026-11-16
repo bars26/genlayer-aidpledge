@@ -1,5 +1,7 @@
+import { currentNetwork } from "../network";
+
 /**
- * Typed, user-readable errors for the AidPledge frontend.
+ * Typed, user-readable errors for the FieldCall frontend.
  *
  * Every failure keeps the underlying error (`cause`, `detail`) so nothing is
  * collapsed into a generic "transaction failed".
@@ -27,7 +29,7 @@ export interface ErrorInfo {
   hint?: string;
 }
 
-export class PledgeError extends Error {
+export class TxError extends Error {
   kind: ErrorKind;
   phase: Phase;
   txHash?: string;
@@ -46,7 +48,7 @@ export class PledgeError extends Error {
     cause?: unknown;
   }) {
     super(init.message);
-    this.name = "PledgeError";
+    this.name = "TxError";
     this.kind = init.kind;
     this.phase = init.phase;
     this.detail = init.detail ?? init.message;
@@ -75,15 +77,15 @@ const UNREACHABLE = /failed to fetch|networkerror|network request failed|fetch f
 const TIMEOUT = /timed? ?out|timeout|retries|not (?:been )?(?:found|mined)|took too long/i;
 const REVERT = /revert|usererror|could not load the page|execution.*error|simulation/i;
 
-export function classifyError(err: unknown, phase: Phase, txHash?: string): PledgeError {
-  if (err instanceof PledgeError) return err;
+export function classifyError(err: unknown, phase: Phase, txHash?: string): TxError {
+  if (err instanceof TxError) return err;
 
   const detail = rawMessage(err);
   const code = (err as any)?.code;
   const base = { phase, detail, txHash, cause: err };
 
   if (code === 4001 || USER_REJECTED.test(detail)) {
-    return new PledgeError({
+    return new TxError({
       ...base,
       kind: "wallet_rejected",
       message: "You rejected the request in your wallet.",
@@ -91,7 +93,7 @@ export function classifyError(err: unknown, phase: Phase, txHash?: string): Pled
     });
   }
   if (NO_WALLET.test(detail)) {
-    return new PledgeError({
+    return new TxError({
       ...base,
       kind: "wallet_missing",
       message: "No wallet is connected.",
@@ -99,15 +101,18 @@ export function classifyError(err: unknown, phase: Phase, txHash?: string): Pled
     });
   }
   if (INSUFFICIENT.test(detail)) {
-    return new PledgeError({
+    return new TxError({
       ...base,
       kind: "insufficient_funds",
       message: "Your wallet does not have enough GEN for this transaction.",
-      hint: "Click \"Test GEN\" in the header to get 50 GEN from the GenLayer Studio faucet, then try again.",
+      hint:
+        currentNetwork().id === "studio"
+          ? "Click \"Test GEN\" in the header to get 50 GEN from the GenLayer Studio faucet, then try again."
+          : "Get Bradbury GEN from the GenLayer testnet faucet (the Faucet link in the header), then try again.",
     });
   }
   if (code === -32005 || code === 429 || RATE_LIMIT.test(detail)) {
-    return new PledgeError({
+    return new TxError({
       ...base,
       kind: "rate_limited",
       message: "The GenLayer Studio RPC is rate limiting requests from your IP.",
@@ -117,25 +122,25 @@ export function classifyError(err: unknown, phase: Phase, txHash?: string): Pled
     });
   }
   if (code === 4902 || WRONG_NETWORK.test(detail)) {
-    return new PledgeError({
+    return new TxError({
       ...base,
       kind: "wrong_network",
-      message: "Your wallet is not on the GenLayer Studio network.",
-      hint: "Switch MetaMask to GenLayer Studio (chain id 61999) and try again.",
+      message: `Your wallet is not on ${currentNetwork().label}.`,
+      hint: `Switch MetaMask to ${currentNetwork().chainName} (chain id ${currentNetwork().chainId}) and try again.`,
     });
   }
   if (UNREACHABLE.test(detail)) {
-    return new PledgeError({
+    return new TxError({
       ...base,
       kind: "rpc_unreachable",
-      message: "Could not reach the GenLayer Studio RPC (it returned an error page or no response).",
+      message: `Could not reach the ${currentNetwork().label} RPC (it returned an error page or no response).`,
       hint: "The endpoint may be restarting. Try again in a minute; nothing was written.",
     });
   }
   if (phase === "estimate") {
     // The fee estimate simulates the call, so a contract revert shows up here first.
     const reverted = REVERT.test(detail);
-    return new PledgeError({
+    return new TxError({
       ...base,
       kind: reverted ? "contract_revert" : "fee_estimation",
       message: reverted
@@ -147,7 +152,7 @@ export function classifyError(err: unknown, phase: Phase, txHash?: string): Pled
     });
   }
   if (phase === "confirm" && TIMEOUT.test(detail)) {
-    return new PledgeError({
+    return new TxError({
       ...base,
       kind: "timeout",
       message: "The transaction was sent but validators did not reach consensus in time.",
@@ -157,14 +162,14 @@ export function classifyError(err: unknown, phase: Phase, txHash?: string): Pled
     });
   }
   if (REVERT.test(detail)) {
-    return new PledgeError({
+    return new TxError({
       ...base,
       kind: "contract_revert",
       message: "The contract rejected this call.",
       hint: "See the underlying error below.",
     });
   }
-  return new PledgeError({
+  return new TxError({
     ...base,
     kind: "unknown",
     message: `Unexpected error while ${describePhase(phase)}.`,
@@ -188,7 +193,7 @@ export function describePhase(phase: Phase): string {
 }
 
 export function toErrorInfo(err: unknown): ErrorInfo & { detail: string; txHash?: string; phase?: Phase } {
-  const e = err instanceof PledgeError ? err : classifyError(err, "read");
+  const e = err instanceof TxError ? err : classifyError(err, "read");
   return {
     kind: e.kind,
     title: e.message,
@@ -200,4 +205,4 @@ export function toErrorInfo(err: unknown): ErrorInfo & { detail: string; txHash?
   };
 }
 
-export const EXPLORER_TX_URL = (hash: string) => `https://explorer-studio.genlayer.com/tx/${hash}`;
+export const EXPLORER_TX_URL = (hash: string) => `${currentNetwork().explorer}/tx/${hash}`;

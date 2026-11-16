@@ -52,9 +52,11 @@ export function FileClaimModal({ pledge, claims, live }: { pledge: Pledge; claim
         <DialogHeader>
           <DialogTitle className="display text-2xl">Did the funding fall short?</DialogTitle>
           <DialogDescription>
-            You stake <strong>{formatGen(stake)} GEN</strong>. Validators read OCHA FTS themselves. If the target was missed, the bond pays the beneficiary
-            in proportion to the gap and you get your stake back plus 10% of what is paid. If it was met, your stake goes to the bond. If FTS cannot be
-            read, it comes back.
+            You stake <strong>{formatGen(stake)} GEN</strong> from your deposit (the app deposits it first if needed). Validators read OCHA FTS
+            themselves{pledge.iati_ref ? <>, and the donor&apos;s own IATI reports ({pledge.iati_ref})</> : null}. If the target was missed
+            {pledge.iati_ref ? " on both" : ""}, the bond pays the beneficiary in proportion to the gap and you get your stake back plus 10% of what is
+            paid. If it was met, your stake goes to the bond. If a source cannot be read{pledge.iati_ref ? ", or the donor's IATI reports cover the pledge" : ""},
+            it comes back. Everything is credited; you take it out with Withdraw.
           </DialogDescription>
         </DialogHeader>
         <div className="rounded-lg bg-[#F4EFE2] p-3 space-y-2">
@@ -65,7 +67,7 @@ export function FileClaimModal({ pledge, claims, live }: { pledge: Pledge; claim
           {live?.ok &&
             (gap > 0 ? (
               <p className="text-xs">
-                If validators read the same, the shortfall is {usd(gap)} ({(share * 100).toFixed(2)}%): about <strong>{formatGen(payNow, 3)} GEN</strong> would
+                If validators read the same{pledge.iati_ref ? " and IATI shows less than the target" : ""}, the shortfall is up to {usd(gap)} ({(share * 100).toFixed(2)}%): about <strong>{formatGen(payNow, 3)} GEN</strong> would
                 be paid, {formatGen((payNow * 9n) / 10n, 3)} to the beneficiary and {formatGen(payNow / 10n, 3)} to you on top of your stake.
               </p>
             ) : (

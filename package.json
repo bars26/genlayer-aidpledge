@@ -10,9 +10,13 @@
     "build": "cd frontend && npm run build",
     "start": "cd frontend && npm run start",
     "lint": "cd frontend && npm run lint",
-    "deploy": "genlayer deploy"
+    "deploy": "genlayer deploy",
+    "postinstall": "node scripts/patch-genlayer-js.mjs"
   },
   "devDependencies": {
     "genlayer-js": "^1.1.8"
+  },
+  "dependencies": {
+    "genlayer-js-bradbury": "npm:genlayer-js@2.0.0-rc.2"
   }
 }

@@ -16,10 +16,13 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
+      - name: Bradbury source is the Studio source with the Bradbury header
+        run: python scripts/bradbury_source.py --check
       - run: genvm-lint check contracts/aid_pledge.py
+      - run: genvm-lint check contracts/aid_pledge.bradbury.py
 
   test-direct:
-    name: Direct Mode Tests
+    name: Direct Mode Tests (Studio runner)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,6 +31,24 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt
       - run: python -m pytest tests/direct/ -v
+
+  test-direct-bradbury:
+    name: Direct Mode Tests (Bradbury runner)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/gltest-direct/bundles-v2
+          key: genvm-manager-v0.6.0-rc10
+      # genlayer-test 0.30 reads the Bradbury runner (py-genlayer:babwp…) from genvm-manager v0.6.0-rc10.
+      - run: pip install "genlayer-test==0.30.0rc2"
+      - run: python -m pytest tests/direct/ -v
+        env:
+          AIDPLEDGE_NETWORK: bradbury
 
   frontend:
     name: Frontend typecheck and build
@@ -41,4 +62,5 @@ jobs:
       - run: cd frontend && npx tsc --noEmit
       - run: cd frontend && npm run build
         env:
-          NEXT_PUBLIC_CONTRACT_ADDRESS: "0xDE5Ec07ed37E5677792833337CF3F5992fc6f0d2"
+          NEXT_PUBLIC_STUDIO_CONTRACT: "0x38d91447B1e435D183B062344CF4c5539B96f965"
+          NEXT_PUBLIC_BRADBURY_CONTRACT: "0xa32C73fd75FC2e5b52484fcE2B8758D046CbA62F"

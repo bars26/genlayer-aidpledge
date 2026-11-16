@@ -1,0 +1,336 @@
+{
+  "network": "bradbury",
+  "contract": "0xa32C73fd75FC2e5b52484fcE2B8758D046CbA62F",
+  "accounts": {
+    "pledger": "0x8A52cD7EE73EA27BFA45BD908607860a24E661F8",
+    "reporter": "0x1cfF3f6F0E1aeA4665D1E133372171637e6f0Fc2",
+    "beneficiary": "0x463Dc91Ce7fFDDade35866d89E0a4EbA410f62d6"
+  },
+  "pledges": {
+    "pledge_0": {
+      "announcement_json": "{\"answer\": \"MATCH\", \"chars\": 5557, \"excerpt\": \"Press release UK announces new humanitarian funding for Sudan The UK has announced new support to Sudan ahead of the Sudan conference which will bring together international representatives. From: Foreign, Commonwealth &amp; Development Office and The Rt Hon David Lammy MP Published: 15 April 2025 2024 to 2026 Starmer Labour government \\\"> This was first published under the 2024 to 2026 Starmer Labour government the UK will commit further life-saving aid for over 650,000 people affected by the on\", \"sha256\": \"ffbcb77efc0c2e102e9abfbda631190eda260a888f428ceae3fb583d96c245f3\", \"url\": \"https://www.gov.uk/government/news/uk-announces-new-humanitarian-funding-for-sudan\"}",
+      "beneficiary": "0x463dc91ce7ffddade35866d89e0a4eba410f62d6",
+      "bond": "1000000000000000000",
+      "claim_ids_json": "[\"claim_0\"]",
+      "deadline": "2026-03-31",
+      "donor_id": "2917",
+      "donor_name": "United Kingdom, Government of",
+      "expires": "2027-03-31",
+      "history_json": "[{\"amount\": \"1000000000000000000\", \"at\": \"2026-11-16T19:12:54\", \"deadline\": \"2026-03-31\", \"event\": \"pledged\", \"iati\": \"GB-GOV-1\", \"target_usd\": 150000000}, {\"at\": \"2026-11-16T19:14:59\", \"claim\": \"claim_0\", \"event\": \"claim_filed\", \"verdict\": \"UNCLEAR\"}, {\"at\": \"2026-11-16T19:16:28\", \"claim\": \"claim_0\", \"event\": \"claim_settled\", \"outcome\": \"stake_returned\", \"verdict\": \"UNCLEAR\"}]",
+      "iati_country": "SD",
+      "iati_name": "UK - Foreign, Commonwealth Development Office (FCDO)",
+      "iati_ref": "GB-GOV-1",
+      "id": "pledge_0",
+      "n_breached": 0,
+      "n_kept": 0,
+      "n_other": 1,
+      "outcome": "",
+      "payout": "1000000000000000000",
+      "pending": 0,
+      "plan_id": "1220",
+      "plan_json": "{\"code\": \"HSDN25\", \"countries\": [\"SD\"], \"end\": \"2025-12-31\", \"locations\": [\"Sudan\"], \"name\": \"Sudan Humanitarian Needs and Response Plan 2025\", \"start\": \"2025-01-01\"}",
+      "pledger": "0x8a52cd7ee73ea27bfa45bd908607860a24e661f8",
+      "stakes_kept": 0,
+      "state": "active",
+      "target_usd": 150000000,
+      "total_bonded": "1000000000000000000",
+      "total_paid": 0
+    },
+    "pledge_1": {
+      "announcement_json": "{\"answer\": \"MATCH\", \"chars\": 5557, \"excerpt\": \"Press release UK announces new humanitarian funding for Sudan The UK has announced new support to Sudan ahead of the Sudan conference which will bring together international representatives. From: Foreign, Commonwealth &amp; Development Office and The Rt Hon David Lammy MP Published: 15 April 2025 2024 to 2026 Starmer Labour government \\\"> This was first published under the 2024 to 2026 Starmer Labour government the UK will commit further life-saving aid for over 650,000 people affected by the on\", \"sha256\": \"ffbcb77efc0c2e102e9abfbda631190eda260a888f428ceae3fb583d96c245f3\", \"url\": \"https://www.gov.uk/government/news/uk-announces-new-humanitarian-funding-for-sudan\"}",
+      "beneficiary": "0x463dc91ce7ffddade35866d89e0a4eba410f62d6",
+      "bond": "803548735000000000",
+      "claim_ids_json": "[\"claim_1\"]",
+      "deadline": "2026-03-31",
+      "donor_id": "2917",
+      "donor_name": "United Kingdom, Government of",
+      "expires": "2027-03-31",
+      "history_json": "[{\"amount\": \"1000000000000000000\", \"at\": \"2026-11-16T19:13:42\", \"deadline\": \"2026-03-31\", \"event\": \"pledged\", \"iati\": \"GB-GOV-1\", \"target_usd\": 200000000}, {\"at\": \"2026-11-16T19:15:44\", \"claim\": \"claim_1\", \"event\": \"claim_filed\", \"verdict\": \"BREACHED\"}, {\"at\": \"2026-11-16T19:17:09\", \"claim\": \"claim_1\", \"event\": \"claim_settled\", \"outcome\": \"paid\", \"verdict\": \"BREACHED\"}]",
+      "iati_country": "SD",
+      "iati_name": "UK - Foreign, Commonwealth Development Office (FCDO)",
+      "iati_ref": "GB-GOV-1",
+      "id": "pledge_1",
+      "n_breached": 1,
+      "n_kept": 0,
+      "n_other": 0,
+      "outcome": "paid",
+      "payout": "1000000000000000000",
+      "pending": 0,
+      "plan_id": "1220",
+      "plan_json": "{\"code\": \"HSDN25\", \"countries\": [\"SD\"], \"end\": \"2025-12-31\", \"locations\": [\"Sudan\"], \"name\": \"Sudan Humanitarian Needs and Response Plan 2025\", \"start\": \"2025-01-01\"}",
+      "pledger": "0x8a52cd7ee73ea27bfa45bd908607860a24e661f8",
+      "stakes_kept": 0,
+      "state": "active",
+      "target_usd": 200000000,
+      "total_bonded": "1000000000000000000",
+      "total_paid": "196451265000000000"
+    }
+  },
+  "claims": {
+    "claim_0": {
+      "claimant": "0x1cff3f6f0e1aea4665d1e133372171637e6f0fc2",
+      "claimant_contested": false,
+      "code": "sources_disagree",
+      "evidence_json": "[{\"flows\": [{\"date\": \"2025-02-25\", \"id\": \"338423\", \"reported\": \"2025-02-24\", \"status\": \"paid\", \"usd\": 1966690}, {\"date\": \"2025-03-25\", \"id\": \"339645\", \"reported\": \"2025-03-22\", \"status\": \"paid\", \"usd\": 12936611}, {\"date\": \"2025-07-15\", \"id\": \"348508\", \"reported\": \"2025-07-09\", \"status\": \"paid\", \"usd\": 20270270}, {\"date\": \"2025-08-19\", \"id\": \"357229\", \"reported\": \"2025-08-19\", \"status\": \"paid\", \"usd\": 7844369}, {\"date\": \"2025-08-19\", \"id\": \"357230\", \"reported\": \"2025-08-19\", \"status\": \"paid\", \"usd\": 3564000}, {\"date\": \"2025-08-19\", \"id\": \"369976\", \"reported\": \"2025-08-19\", \"status\": \"paid\", \"usd\": 13804465}, {\"date\": \"2025-08-19\", \"id\": \"369977\", \"reported\": \"2025-08-19\", \"status\": \"paid\", \"usd\": 665280}, {\"date\": \"2025-08-19\", \"id\": \"369978\", \"reported\": \"2025-08-19\", \"status\": \"paid\", \"usd\": 2236525}, {\"date\": \"2025-10-03\", \"id\": \"363612\", \"reported\": \"2025-10-03\", \"status\": \"paid\", \"usd\": 168728}, {\"date\": \"2025-10-22\", \"id\": \"364601\", \"reported\": \"2025-10-16\", \"status\": \"paid\", \"usd\": 13333333}, {\"date\": \"2025-11-11\", \"id\": \"366159\", \"reported\": \"2025-11-07\", \"status\": \"paid\", \"usd\": 3947368}, {\"date\": \"2025-11-20\", \"id\": \"368460\", \"reported\": \"2025-11-19\", \"status\": \"paid\", \"usd\": 3426952}, {\"date\": \"2025-11-20\", \"id\": \"368462\", \"reported\": \"2025-11-19\", \"status\": \"paid\", \"usd\": 2348430}, {\"date\": \"2025-11-20\", \"id\": \"368463\", \"reported\": \"2025-11-19\", \"status\": \"paid\", \"usd\": 15877405}, {\"date\": \"2025-11-20\", \"id\": \"368464\", \"reported\": \"2025-11-19\", \"status\": \"paid\", \"usd\": 5944518}, {\"date\": \"2026-01-15\", \"id\": \"373562\", \"reported\": \"2026-01-13\", \"status\": \"paid\", \"usd\": 2545582}, {\"date\": \"2026-01-15\", \"id\": \"373563\", \"reported\": \"2026-01-13\", \"status\": \"paid\", \"usd\": 2679560}, {\"date\": \"2026-01-15\", \"id\": \"373564\", \"reported\": \"2026-01-13\", \"status\": \"paid\", \"usd\": 1456139}, {\"date\": \"2026-01-21\", \"id\": \"374265\", \"reported\": \"2026-01-21\", \"status\": \"paid\", \"usd\": 21408457}, {\"date\": \"2026-01-21\", \"id\": \"374266\", \"reported\": \"2026-01-21\", \"status\": \"paid\", \"usd\": 1288020}, {\"date\": \"2026-01-21\", \"id\": \"374267\", \"reported\": \"2026-01-21\", \"status\": \"paid\", \"usd\": 41767}, {\"date\": \"2026-01-21\", \"id\": \"374268\", \"reported\": \"2026-01-21\", \"status\": \"paid\", \"usd\": 3324467}], \"flows_sha256\": \"dce0803d6bdc9ee09a0a481b132855fa116146c0e78cbc2e7ca26504cb3998b7\", \"flows_total\": 22, \"iati_source\": \"https://d-portal.org/q.json?select=sum_of_percent_of_trans_usd,count_aid&from=act,trans,country,sector&reporting_ref=GB-GOV-1&country_code=SD&trans_code=D|E&sector_group=720|730|740&trans_day_gteq=2025-01-01&trans_day_lteq=2026-03-31\", \"packet_sha256\": \"26dcf711500fc2ce91afba03ea339497d3c77827be4a5aa1a9616bd9edfda732\", \"pages_read\": 1, \"read_at\": \"2026-11-16T19:14:59\", \"record\": \"https://fts.unocha.org/plans/1220/summary\", \"source\": \"https://api.hpc.tools/v1/public/fts/flow?planId=1220&filterBy=sourceOrganizationId:2917&limit=100\"}]",
+      "facts_json": "{\"after_deadline_usd\": 0, \"deadline\": \"2026-03-31\", \"donor\": \"United Kingdom, Government of\", \"flows_counted\": 22, \"flows_read\": 22, \"flows_reported\": 22, \"funded_usd\": 141078936, \"iati_activities\": 14, \"iati_country\": \"SD\", \"iati_from\": \"2025-01-01\", \"iati_publisher\": \"UK - Foreign, Commonwealth Development Office (FCDO)\", \"iati_usd\": 160709747, \"plan\": \"Sudan Humanitarian Needs and Response Plan 2025\", \"pledged_only_usd\": 0, \"shortfall_bp\": 0, \"shortfall_usd\": 0, \"target_usd\": 150000000}",
+      "filed_at": "2026-11-16T19:14:59Z",
+      "id": "claim_0",
+      "outcome": "stake_returned",
+      "pledge_id": "pledge_0",
+      "pledger_contested": false,
+      "stake": "100000000000000000",
+      "state": "settled",
+      "timeline_json": "[{\"at\": \"2026-11-16T19:14:59\", \"code\": \"sources_disagree\", \"event\": \"filed\", \"evidence\": \"26dcf711500fc2ce91afba03ea339497d3c77827be4a5aa1a9616bd9edfda732\", \"verdict\": \"UNCLEAR\"}, {\"amount\": \"100000000000000000\", \"at\": \"2026-11-16T19:16:28\", \"event\": \"settled\", \"outcome\": \"stake_returned\"}]",
+      "verdict": "UNCLEAR",
+      "why": "OCHA FTS records $141,078,936 of funding (commitments and payments) from United Kingdom, Government of to Sudan Humanitarian Needs and Response Plan 2025 dated on or before 2026-03-31, across 22 flows, short of the pledged $150,000,000. But United Kingdom, Government of's own IATI reports (UK - Foreign, Commonwealth Development Office (FCDO)) show $160,709,747 of humanitarian disbursements to SD from 2025-01-01 to 2026-03-31, across 14 activities, which covers the pledge: the two sources disagree, so nothing is paid and the stake goes back (FTS may not have recorded every contribution yet).",
+      "window_from": "2026-11-16T19:14:59Z"
+    },
+    "claim_1": {
+      "claimant": "0x1cff3f6f0e1aea4665d1e133372171637e6f0fc2",
+      "claimant_contested": false,
+      "code": "shortfall",
+      "evidence_json": "[{\"flows\": [{\"date\": \"2025-02-25\", \"id\": \"338423\", \"reported\": \"2025-02-24\", \"status\": \"paid\", \"usd\": 1966690}, {\"date\": \"2025-03-25\", \"id\": \"339645\", \"reported\": \"2025-03-22\", \"status\": \"paid\", \"usd\": 12936611}, {\"date\": \"2025-07-15\", \"id\": \"348508\", \"reported\": \"2025-07-09\", \"status\": \"paid\", \"usd\": 20270270}, {\"date\": \"2025-08-19\", \"id\": \"357229\", \"reported\": \"2025-08-19\", \"status\": \"paid\", \"usd\": 7844369}, {\"date\": \"2025-08-19\", \"id\": \"357230\", \"reported\": \"2025-08-19\", \"status\": \"paid\", \"usd\": 3564000}, {\"date\": \"2025-08-19\", \"id\": \"369976\", \"reported\": \"2025-08-19\", \"status\": \"paid\", \"usd\": 13804465}, {\"date\": \"2025-08-19\", \"id\": \"369977\", \"reported\": \"2025-08-19\", \"status\": \"paid\", \"usd\": 665280}, {\"date\": \"2025-08-19\", \"id\": \"369978\", \"reported\": \"2025-08-19\", \"status\": \"paid\", \"usd\": 2236525}, {\"date\": \"2025-10-03\", \"id\": \"363612\", \"reported\": \"2025-10-03\", \"status\": \"paid\", \"usd\": 168728}, {\"date\": \"2025-10-22\", \"id\": \"364601\", \"reported\": \"2025-10-16\", \"status\": \"paid\", \"usd\": 13333333}, {\"date\": \"2025-11-11\", \"id\": \"366159\", \"reported\": \"2025-11-07\", \"status\": \"paid\", \"usd\": 3947368}, {\"date\": \"2025-11-20\", \"id\": \"368460\", \"reported\": \"2025-11-19\", \"status\": \"paid\", \"usd\": 3426952}, {\"date\": \"2025-11-20\", \"id\": \"368462\", \"reported\": \"2025-11-19\", \"status\": \"paid\", \"usd\": 2348430}, {\"date\": \"2025-11-20\", \"id\": \"368463\", \"reported\": \"2025-11-19\", \"status\": \"paid\", \"usd\": 15877405}, {\"date\": \"2025-11-20\", \"id\": \"368464\", \"reported\": \"2025-11-19\", \"status\": \"paid\", \"usd\": 5944518}, {\"date\": \"2026-01-15\", \"id\": \"373562\", \"reported\": \"2026-01-13\", \"status\": \"paid\", \"usd\": 2545582}, {\"date\": \"2026-01-15\", \"id\": \"373563\", \"reported\": \"2026-01-13\", \"status\": \"paid\", \"usd\": 2679560}, {\"date\": \"2026-01-15\", \"id\": \"373564\", \"reported\": \"2026-01-13\", \"status\": \"paid\", \"usd\": 1456139}, {\"date\": \"2026-01-21\", \"id\": \"374265\", \"reported\": \"2026-01-21\", \"status\": \"paid\", \"usd\": 21408457}, {\"date\": \"2026-01-21\", \"id\": \"374266\", \"reported\": \"2026-01-21\", \"status\": \"paid\", \"usd\": 1288020}, {\"date\": \"2026-01-21\", \"id\": \"374267\", \"reported\": \"2026-01-21\", \"status\": \"paid\", \"usd\": 41767}, {\"date\": \"2026-01-21\", \"id\": \"374268\", \"reported\": \"2026-01-21\", \"status\": \"paid\", \"usd\": 3324467}], \"flows_sha256\": \"dce0803d6bdc9ee09a0a481b132855fa116146c0e78cbc2e7ca26504cb3998b7\", \"flows_total\": 22, \"iati_source\": \"https://d-portal.org/q.json?select=sum_of_percent_of_trans_usd,count_aid&from=act,trans,country,sector&reporting_ref=GB-GOV-1&country_code=SD&trans_code=D|E&sector_group=720|730|740&trans_day_gteq=2025-01-01&trans_day_lteq=2026-03-31\", \"packet_sha256\": \"d47a380a28ae266224066d04cb6102a3746e09324817667750dfe2b54a781dbb\", \"pages_read\": 1, \"read_at\": \"2026-11-16T19:15:44\", \"record\": \"https://fts.unocha.org/plans/1220/summary\", \"source\": \"https://api.hpc.tools/v1/public/fts/flow?planId=1220&filterBy=sourceOrganizationId:2917&limit=100\"}]",
+      "facts_json": "{\"after_deadline_usd\": 0, \"deadline\": \"2026-03-31\", \"donor\": \"United Kingdom, Government of\", \"flows_counted\": 22, \"flows_read\": 22, \"flows_reported\": 22, \"funded_usd\": 141078936, \"iati_activities\": 14, \"iati_country\": \"SD\", \"iati_from\": \"2025-01-01\", \"iati_publisher\": \"UK - Foreign, Commonwealth Development Office (FCDO)\", \"iati_usd\": 160709747, \"plan\": \"Sudan Humanitarian Needs and Response Plan 2025\", \"pledged_only_usd\": 0, \"shortfall_bp\": 1964, \"shortfall_usd\": 39290253, \"target_usd\": 200000000}",
+      "filed_at": "2026-11-16T19:15:44Z",
+      "id": "claim_1",
+      "outcome": "paid",
+      "pledge_id": "pledge_1",
+      "pledger_contested": false,
+      "stake": "100000000000000000",
+      "state": "settled",
+      "timeline_json": "[{\"at\": \"2026-11-16T19:15:44\", \"code\": \"shortfall\", \"event\": \"filed\", \"evidence\": \"d47a380a28ae266224066d04cb6102a3746e09324817667750dfe2b54a781dbb\", \"verdict\": \"BREACHED\"}, {\"at\": \"2026-11-16T19:17:09\", \"beneficiary\": \"176806138500000000\", \"event\": \"settled\", \"outcome\": \"paid\", \"reporter\": \"19645126500000000\", \"share_bp\": 1964}]",
+      "verdict": "BREACHED",
+      "why": "OCHA FTS records $141,078,936 of funding (commitments and payments) from United Kingdom, Government of to Sudan Humanitarian Needs and Response Plan 2025 dated on or before 2026-03-31, across 22 flows, and United Kingdom, Government of's own IATI reports (UK - Foreign, Commonwealth Development Office (FCDO)) show $160,709,747 of humanitarian disbursements to SD from 2025-01-01 to 2026-03-31, across 14 activities. Even the larger of the two, $160,709,747, is $39,290,253 short of the pledged $200,000,000 (19.64% short).",
+      "window_from": "2026-11-16T19:15:44Z"
+    }
+  },
+  "reconciliations": [
+    {
+      "label": "two pledges bonded from the deposit, 1 GEN still credited",
+      "bonds": "2000000000000000000",
+      "pending_stakes": "0",
+      "owed": "1000000000000000000",
+      "expected": "3000000000000000000",
+      "balance": "3000000000000000000",
+      "ok": true
+    },
+    {
+      "label": "both claims settled, every share credited",
+      "bonds": "1803548735000000000",
+      "pending_stakes": "0",
+      "owed": "1496451265000000000",
+      "expected": "3300000000000000000",
+      "balance": "3300000000000000000",
+      "ok": true
+    },
+    {
+      "label": "end of run, after the withdrawals",
+      "bonds": "1803548735000000000",
+      "pending_stakes": "0",
+      "owed": "0",
+      "expected": "1803548735000000000",
+      "balance": "1803548735000000000",
+      "ok": true
+    }
+  ],
+  "log": [
+    {
+      "who": "pledger",
+      "call": "create_pledge(\"2917\", \"1220\", 150000000, \"2026-03-31\", \"https://www.gov.uk/government/news/uk-announces-new-humanitarian-funding-for-sudan\", \"1000000000000000000\", \"0x463Dc91Ce7fFDDade35866d89E0a4EbA410f62d6\", \"2027-03-31\", \"XM-DAC-41140\", \"1000000000000000000\")",
+      "value": "0.0000",
+      "ok": false,
+      "hash": "0xd926acc9eacdca74a68d1f7f406c06d52f414eac8490a47410c0d38968a625e7",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_ERROR",
+      "votes": [
+        "ERROR",
+        "ERROR",
+        "ERROR",
+        "ERROR",
+        "ERROR"
+      ],
+      "seconds": 50,
+      "recipient": "0xa32C73fd75FC2e5b52484fcE2B8758D046CbA62F"
+    },
+    {
+      "who": "pledger",
+      "call": "create_pledge(\"2917\", \"1220\", 150000000, \"2026-03-31\", \"https://www.gov.uk/government/news/uk-announces-new-humanitarian-funding-for-sudan\", \"1000000000000000000\", \"0x463Dc91Ce7fFDDade35866d89E0a4EbA410f62d6\", \"2027-03-31\", \"GB-GOV-1\", \"1000000000000000000\")",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0x9e9bb91aa49c4e03bb2962ca6d172218d0eea406cf28ea6a12c71497be48fed7",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "TIMEOUT",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 49,
+      "recipient": "0xa32C73fd75FC2e5b52484fcE2B8758D046CbA62F"
+    },
+    {
+      "who": "pledger",
+      "call": "create_pledge(\"2917\", \"1220\", 200000000, \"2026-03-31\", \"https://www.gov.uk/government/news/uk-announces-new-humanitarian-funding-for-sudan\", \"1000000000000000000\", \"0x463Dc91Ce7fFDDade35866d89E0a4EbA410f62d6\", \"2027-03-31\", \"GB-GOV-1\", \"1000000000000000000\")",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0x903be2e119c0ab0cb0766d2e239023d2cff61fadbe79abe6b15144d798d0e009",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "TIMEOUT",
+        "TIMEOUT"
+      ],
+      "seconds": 40,
+      "recipient": "0xa32C73fd75FC2e5b52484fcE2B8758D046CbA62F"
+    },
+    {
+      "who": "reporter",
+      "call": "deposit()",
+      "value": "0.3000",
+      "ok": true,
+      "hash": "0xb22500103b5baed1ffe1607a09c2b6e356bd2779d054bacec42aa11975f7358d",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 31,
+      "recipient": "0xa32C73fd75FC2e5b52484fcE2B8758D046CbA62F"
+    },
+    {
+      "who": "reporter",
+      "call": "file_claim(\"pledge_0\")",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0xc7630139292caa59461dd68e7b1772f39d9792eb945ca855445e24da4768a14c",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 40,
+      "recipient": "0xa32C73fd75FC2e5b52484fcE2B8758D046CbA62F"
+    },
+    {
+      "who": "reporter",
+      "call": "file_claim(\"pledge_1\")",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0x2a01fd235e48aad72838e75218b07bb983f51fbc3e7a957a28ab0022d9340096",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 39,
+      "recipient": "0xa32C73fd75FC2e5b52484fcE2B8758D046CbA62F"
+    },
+    {
+      "who": "reporter",
+      "call": "settle(\"claim_0\")",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0x849f361e182de7f14d0091885fc4b71766071b49259e624f3b2dc2a51c0ddd2d",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 40,
+      "recipient": "0xa32C73fd75FC2e5b52484fcE2B8758D046CbA62F"
+    },
+    {
+      "who": "pledger",
+      "call": "settle(\"claim_1\")",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0xcb2c574949b36eae32ba758dbefa7485200fccb8a575b463781d7f2fa487e953",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 42,
+      "recipient": "0xa32C73fd75FC2e5b52484fcE2B8758D046CbA62F"
+    },
+    {
+      "who": "beneficiary",
+      "call": "withdraw()",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0xc20ccf9892e06ff652841acb956652d9b19be61589bc6675e27537ab4b2cd411",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 30,
+      "recipient": "0xa32C73fd75FC2e5b52484fcE2B8758D046CbA62F"
+    },
+    {
+      "who": "reporter",
+      "call": "withdraw()",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0xbe310043b0e05ee5df8f58c87306126a88b8d332be851a3bc5de0c842303966a",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 34,
+      "recipient": "0xa32C73fd75FC2e5b52484fcE2B8758D046CbA62F"
+    },
+    {
+      "who": "pledger",
+      "call": "withdraw()",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0x67b4367c59ee8d6e59d78d7c35eb081b079e1a5ab50af23feb815206c565ac10",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 38,
+      "recipient": "0xa32C73fd75FC2e5b52484fcE2B8758D046CbA62F"
+    }
+  ]
+}

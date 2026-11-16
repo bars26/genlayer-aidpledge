@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import {
   DONORS,
+  IATI_PUBLISHERS,
   MIN_PAYOUT_WEI,
   MIN_TARGET_USD,
   PLANS,
@@ -33,10 +34,10 @@ const EXAMPLE_URL = "https://www.gov.uk/government/news/uk-announces-new-humanit
 export function CreatePledgeModal({ open, onOpenChange, terms }: { open: boolean; onOpenChange: (o: boolean) => void; terms?: CheckTerms }) {
   const { address, isConnected } = useWallet();
   const { writeAsync, pending } = usePledgeWrite();
-  const [f, setF] = useState({ donor: "2917", plan: "1220", target: "150000000", deadline: addDays(todayUtc(), 90), url: "", payout: "2", bond: "", beneficiary: "", expires: "" });
+  const [f, setF] = useState({ donor: "2917", plan: "1220", target: "150000000", deadline: addDays(todayUtc(), 90), url: "", payout: "2", bond: "", beneficiary: "", expires: "", iati: IATI_PUBLISHERS["2917"] });
 
   useEffect(() => {
-    if (open && terms) setF((x) => ({ ...x, donor: terms.donor, plan: terms.plan, target: terms.target, deadline: terms.by }));
+    if (open && terms) setF((x) => ({ ...x, donor: terms.donor, plan: terms.plan, target: terms.target, deadline: terms.by, iati: IATI_PUBLISHERS[terms.donor] ?? "" }));
   }, [open, terms]);
 
   const target = Number(f.target.replace(/[,_\s]/g, ""));
@@ -67,6 +68,7 @@ export function CreatePledgeModal({ open, onOpenChange, terms }: { open: boolean
     !(payout && payout >= MIN_PAYOUT_WEI) && "The payout must be at least 1 GEN.",
     !(bond && payout && bond >= payout) && "The bond must cover the payout.",
     !/^0x[0-9a-fA-F]{40}$/.test(f.beneficiary.trim()) && "Enter the beneficiary's wallet address.",
+    f.iati.trim() && !/^[A-Za-z0-9][A-Za-z0-9_.\-]{2,59}$/.test(f.iati.trim()) && "The IATI publisher id looks like GB-GOV-1 (or leave it empty).",
     (!expires || expires < earliest || (minExpires && expires < minExpires)) && `The pledge must run until ${minExpires ? earliest : "60 days after the deadline"} or later.`,
   ].filter(Boolean) as string[];
 
@@ -76,7 +78,7 @@ export function CreatePledgeModal({ open, onOpenChange, terms }: { open: boolean
       await writeAsync({
         kind: "create",
         bond,
-        input: { donorId: f.donor, planId: f.plan, targetUsd: target, deadline: f.deadline, announcementUrl: f.url.trim(), payout, beneficiary: f.beneficiary.trim(), expires },
+        input: { donorId: f.donor, planId: f.plan, targetUsd: target, deadline: f.deadline, announcementUrl: f.url.trim(), payout, beneficiary: f.beneficiary.trim(), expires, iatiRef: f.iati.trim() },
       });
       onOpenChange(false);
     } catch {
@@ -102,7 +104,7 @@ export function CreatePledgeModal({ open, onOpenChange, terms }: { open: boolean
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label>Donor</Label>
-              <select className="field" value={donorKnown ? f.donor : ""} onChange={(e) => setF({ ...f, donor: e.target.value })}>
+              <select className="field" value={donorKnown ? f.donor : ""} onChange={(e) => setF({ ...f, donor: e.target.value, iati: IATI_PUBLISHERS[e.target.value] ?? "" })}>
                 {DONORS.map((d) => (
                   <option key={d.id} value={d.id}>
                     {d.name}
@@ -163,6 +165,16 @@ export function CreatePledgeModal({ open, onOpenChange, terms }: { open: boolean
             </p>
           </div>
 
+          <div className="space-y-1">
+            <Label>Second source: the donor&apos;s IATI publisher id (optional)</Label>
+            <Input value={f.iati} onChange={set("iati")} placeholder="GB-GOV-1" className="mono text-xs" />
+            <p className="text-[11px] text-muted-foreground">
+              With it, a shortfall must also show in the donor&apos;s own IATI reports (humanitarian disbursements to the plan&apos;s country,
+              read through d-portal): only the gap both sources show is paid, and nothing if the donor&apos;s reports cover the pledge.
+              Validators check that the publisher is this donor. Needs a single-country plan; leave empty to rule on FTS alone.
+            </p>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label>Payout for a total shortfall (GEN)</Label>
@@ -172,7 +184,7 @@ export function CreatePledgeModal({ open, onOpenChange, terms }: { open: boolean
             <div className="space-y-1">
               <Label>Bond (GEN)</Label>
               <Input value={f.bond} onChange={set("bond")} inputMode="decimal" placeholder={payout ? formatGen(payout) : ""} />
-              <p className="text-[11px] text-muted-foreground">At least the payout, so any shortfall is paid in full.</p>
+              <p className="text-[11px] text-muted-foreground">At least the payout, so any shortfall is paid in full. Taken from your deposit (the app deposits what is missing first).</p>
             </div>
             <div className="space-y-1">
               <Label>Pledge open until</Label>
@@ -207,7 +219,7 @@ export function CreatePledgeModal({ open, onOpenChange, terms }: { open: boolean
           {pending === "create" && <Loader2 className="w-4 h-4 animate-spin" />}
           {isConnected ? `Bond ${bond ? formatGen(bond) : "?"} GEN and pledge` : "Connect a wallet to pledge"}
         </Button>
-        <p className="text-xs text-muted-foreground">Validators read FTS and the announcement during the transaction; it usually takes 1 to 3 minutes.</p>
+        <p className="text-xs text-muted-foreground">Validators read FTS, the IATI publisher and the announcement during the transaction; it usually takes 1 to 3 minutes. The pledge itself sends no GEN: if the validators refuse it or cannot agree, the deposit stays credited to you.</p>
       </DialogContent>
     </Dialog>
   );

@@ -5,6 +5,7 @@ import { HandCoins, Landmark, Loader2, RefreshCw, Scale, Send } from "lucide-rea
 import { CreatePledgeModal } from "@/components/CreatePledgeModal";
 import { FundingCheck, type CheckTerms } from "@/components/FundingCheck";
 import { Navbar } from "@/components/Navbar";
+import { OwedCard } from "@/components/OwedCard";
 import { PledgeCard } from "@/components/PledgeCard";
 import { TransactionPanel } from "@/components/TransactionPanel";
 import { Button } from "@/components/ui/button";
@@ -14,8 +15,8 @@ import { useRegistry } from "@/lib/hooks/useAidPledge";
 const STEPS = [
   { icon: Landmark, title: "A pledge is announced", body: "A government promises aid for a crisis. Anyone can bond GEN behind it: this much money, to this plan, by this date." },
   { icon: HandCoins, title: "Validators read the promise", body: "They read the donor's own announcement and refuse the bond unless it really is this donor's pledge for this crisis." },
-  { icon: Scale, title: "FTS is the scoreboard", body: "After the deadline, anyone can report a shortfall. Validators add up what OCHA's Financial Tracking Service records as committed or paid." },
-  { icon: Send, title: "The gap is paid", body: "A shortfall pays the beneficiary in proportion to the gap: 6% short pays 6%. The reporter earns 10% of it." },
+  { icon: Scale, title: "Two scoreboards", body: "After the deadline, anyone can report a shortfall. Validators add up what OCHA's Financial Tracking Service records, and what the donor itself reports to IATI." },
+  { icon: Send, title: "The confirmed gap is paid", body: "Only the gap both sources show is paid, pro rata: 6% short pays 6%. If the donor's own reports cover the pledge, nothing is paid. The reporter earns 10%." },
 ];
 
 export default function HomePage() {
@@ -37,7 +38,7 @@ export default function HomePage() {
               <h1 className="display text-5xl md:text-6xl leading-[1.02]">Did the aid arrive?</h1>
               <p className="text-lg text-muted-foreground">
                 Donors announce millions for a crisis at a conference. Months later, nobody checks. On AidPledge, GEN is bonded behind an announced
-                pledge, and GenLayer validators check the UN&apos;s own funding records when the deadline passes.
+                pledge, and GenLayer validators check the UN&apos;s funding records, and the donor&apos;s own IATI reports, when the deadline passes.
               </p>
               <dl className="flex gap-8 pt-1">
                 <div>
@@ -106,6 +107,11 @@ export default function HomePage() {
                   and dated on or before the deadline count. Bare pledges and later flows never do.
                 </p>
                 <p>
+                  <strong>A second, independent source.</strong> A pledge can name the donor&apos;s IATI publisher (e.g. GB-GOV-1). Then validators also
+                  read, through d-portal, the humanitarian disbursements the donor itself published for the plan&apos;s country. A shortfall is paid only
+                  for the gap both sources show; if the donor&apos;s own reports cover the pledge, the sources disagree and nothing is paid.
+                </p>
+                <p>
                   <strong>The promise is checked first.</strong> At pledging, validators read the donor&apos;s announcement and answer one question: is
                   this the donor&apos;s funding pledge for this crisis? Anything but a yes refunds the bond.
                 </p>
@@ -114,10 +120,12 @@ export default function HomePage() {
                   goes against can ask once for a fresh reading within 10 minutes.
                 </p>
                 <p>
-                  <strong>Always paid in full.</strong> The bond covers the whole payout and pays once. Every reading keeps the flows read, with sha256
-                  hashes. If FTS is down, nothing is decided and the stake comes back.
+                  <strong>No GEN rides on a reading.</strong> Bonds and stakes come from a deposit and are taken only after the validators agree;
+                  every payout is credited, and only Withdraw sends GEN, to the caller. The bond covers the whole payout and pays once. Every reading
+                  keeps the flows read, with sha256 hashes. If a source is down, nothing is decided and the stake comes back.
                 </p>
               </div>
+              <OwedCard />
               <TransactionPanel />
             </aside>
           </section>
@@ -129,6 +137,10 @@ export default function HomePage() {
           OCHA Financial Tracking Service
         </a>
         {" · "}
+        <a href="https://d-portal.org" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+          IATI via d-portal
+        </a>
+        {" · "}
         <a href="https://genlayer.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
           Built on GenLayer
         </a>
@@ -136,7 +148,7 @@ export default function HomePage() {
         <a href="https://github.com/bars26/genlayer-aidpledge" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
           Source
         </a>
-        {" · "}Rulings are about FTS records only, not about any donor&apos;s intentions.
+        {" · "}Rulings are about published records only, not about any donor&apos;s intentions.
       </footer>
       <CreatePledgeModal open={modal.open} terms={modal.terms} onOpenChange={(open) => setModal((m) => ({ ...m, open }))} />
     </div>

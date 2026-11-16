@@ -10,6 +10,10 @@ export interface Pledge {
   donor_name: string;
   plan_id: string;
   plan_json: string;
+  /** The donor's IATI publisher id (second source), or "" for a pledge ruled on OCHA FTS alone. */
+  iati_ref: string;
+  iati_name: string;
+  iati_country: string;
   target_usd: Num;
   deadline: string;
   announcement_json: string;
@@ -56,6 +60,7 @@ export interface Plan {
   start: string;
   end: string;
   locations: string[];
+  countries?: string[];
 }
 
 /** The donor's announcement as validators read it at pledging. */
@@ -79,6 +84,12 @@ export interface ClaimFacts {
   pledged_only_usd?: number;
   shortfall_usd?: number;
   shortfall_bp?: number;
+  /** Second source: the donor's own IATI reports (present when the pledge names an IATI publisher and FTS falls short). */
+  iati_publisher?: string;
+  iati_country?: string;
+  iati_from?: string;
+  iati_usd?: number;
+  iati_activities?: number;
 }
 
 /** One FTS flow, as the contract stores it. */
@@ -97,8 +108,9 @@ export interface EvidencePacket {
   flows?: Flow[];
   flows_total?: number;
   flows_sha256?: string;
-  fts_total_incoming?: number;
   pages_read?: number;
+  /** The d-portal query that read the donor's IATI transactions. */
+  iati_source?: string;
   read_at?: string;
   packet_sha256?: string;
 }
@@ -245,7 +257,7 @@ export const VERDICT_STYLE: Record<Verdict, { label: string; cls: string; help: 
   UNCLEAR: {
     label: "Undecided",
     cls: "bg-[#FDF0D2] text-[#86580A] border-[#F2DBA2]",
-    help: "OCHA FTS could not be read. Nothing is decided and the stake comes back.",
+    help: "Nothing is decided and the stake comes back: a source could not be read in full, or the donor's own IATI reports cover what FTS shows missing.",
   },
 };
 
@@ -260,4 +272,16 @@ export const CODE_LABEL: Record<string, string> = {
   shortfall: "below target",
   unreachable: "FTS unreachable",
   incomplete: "FTS list incomplete",
+  iati_unreachable: "IATI unreachable",
+  sources_disagree: "sources disagree",
 };
+
+/** IATI publishers for the donors in the picker (the agency that reports humanitarian aid). Any id can be typed in. */
+export const IATI_PUBLISHERS: Record<string, string> = {
+  "2917": "GB-GOV-1",
+  "2933": "US-GOV-1",
+  "4306": "XM-DAC-5-7",
+  "2928": "CA-3",
+};
+export const iatiActivitiesUrl = (ref: string, country: string) =>
+  `https://d-portal.org/ctrack.html?publisher=${encodeURIComponent(ref)}&country=${encodeURIComponent(country)}#view=main`;
