@@ -240,7 +240,7 @@ export function usePledgeWrite() {
           case "withdraw":
             if (owedBefore === 0n) refuse("Nothing is credited to this wallet.");
             result = await contract.withdraw(onProgress);
-            note = `${formatGen(owedBefore, 4)} GEN sent to your wallet${bradbury ? " (it arrives about a minute after the transaction finalizes)" : ""}.`;
+            note = `${formatGen(owedBefore, 4)} GEN sent to your wallet (it arrives once the transaction finalizes: about a minute on Bradbury, a few minutes on Studio).`;
             break;
         }
         updateTx(logId, { state: "accepted", txHash: result.txHash, status: result.status, executionResult: result.executionResult, progress: note });

@@ -169,6 +169,20 @@ class AidPledge {
   }
 
   /**
+   * GenLayer Studio (since 2026-11-24) charges every transaction a fee distribution, like Bradbury: estimate it and send
+   * it with the write (genlayer-js 2.0). GEN a withdraw sends leaves once the transaction is finalized.
+   */
+  private async studioFees(functionName: string) {
+    const time = BRADBURY_TIME[functionName] ?? 120n;
+    try {
+      const est = await this.client.estimateTransactionFees({ leaderTimeunitsAllocation: time, validatorTimeunitsAllocation: time });
+      return { distribution: est.distribution, feeValue: est.feeValue };
+    } catch (err) {
+      throw classifyError(err, "estimate");
+    }
+  }
+
+  /**
    * Send a write and wait for consensus. Sends are never auto-retried (each attempt would
    * prompt the wallet again); receipt polling is, because the hash is already known.
    * A call the contract reverted is still ACCEPTED by consensus, so the receipt's
@@ -182,7 +196,7 @@ class AidPledge {
     onProgress?.({ step: "awaiting_wallet", message: "Approve the transaction in your wallet." });
     let txHash: string;
     try {
-      txHash = (await this.client.writeContract({ address: this.contractAddress, functionName, args, value })) as string;
+      txHash = (await this.client.writeContract({ address: this.contractAddress, functionName, args, value, fees: await this.studioFees(functionName) })) as string;
     } catch (err) {
       throw classifyError(err, "send");
     }
